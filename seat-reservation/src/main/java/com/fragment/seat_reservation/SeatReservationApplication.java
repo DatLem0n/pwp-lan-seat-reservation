@@ -11,3 +11,4 @@ public class SeatReservationApplication {
 	}
 
 }
+// base application
