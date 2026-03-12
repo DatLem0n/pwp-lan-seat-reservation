@@ -1,5 +1,9 @@
 package com.fragment.seat_reservation.repositories;
 
-public interface EventRepository {
+import com.fragment.seat_reservation.entities.Event;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface EventRepository extends JpaRepository <Event, Long> {
+    Event findEventByName(String name);
 }
 // event database queries

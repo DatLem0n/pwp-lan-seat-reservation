@@ -4,8 +4,9 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
-
+@Data
 @Entity
 @Table(name = "events")
 public class Event {
