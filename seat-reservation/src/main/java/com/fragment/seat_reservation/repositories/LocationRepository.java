@@ -1,5 +1,8 @@
 package com.fragment.seat_reservation.repositories;
 
-public interface LocationRepository {
+import com.fragment.seat_reservation.entities.Location;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LocationRepository extends JpaRepository<Location, Integer> {
 }
 // location database queries

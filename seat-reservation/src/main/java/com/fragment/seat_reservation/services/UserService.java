@@ -1,6 +1,6 @@
 package com.fragment.seat_reservation.services;
 
-import com.fragment.seat_reservation.dto.UserDto;
+import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.entities.User;
 import com.fragment.seat_reservation.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -14,14 +14,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void saveUser (UserDto userDto) {
+    public void saveUser (UserRegistrationDto userRegistrationDto) {
        User user = new User();
-       user.setUsername(userDto.getUsername());
-       user.setFirstName(userDto.getFirstName());
-       user.setLastName(userDto.getLastName());
-       user.setEmail(userDto.getEmail());
-       user.setPassword(userDto.getPassword());
-       user.setPhone(userDto.getPhoneNumber());
+       user.setUsername(userRegistrationDto.getUsername());
+       user.setFirstName(userRegistrationDto.getFirstName());
+       user.setLastName(userRegistrationDto.getLastName());
+       user.setEmail(userRegistrationDto.getEmail());
+       user.setPassword(userRegistrationDto.getPassword());
+       user.setPhone(userRegistrationDto.getPhoneNumber());
 
        user.setDob(java.time.LocalDate.now());
        user.setLastLogin(null);
