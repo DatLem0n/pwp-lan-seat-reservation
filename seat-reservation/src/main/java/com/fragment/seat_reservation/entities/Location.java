@@ -19,9 +19,6 @@ public class Location {
     @Column(length = 64, nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private Integer seatCount;
-
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;

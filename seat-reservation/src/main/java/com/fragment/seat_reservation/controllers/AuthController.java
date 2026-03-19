@@ -1,9 +1,8 @@
 package com.fragment.seat_reservation.controllers;
 
-import com.fragment.seat_reservation.dto.UserDto;
+import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +16,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(
-            @Valid @RequestBody UserDto request) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegistrationDto request) {
 
         userService.saveUser(request);
         //AuthResponse response = authService.register(request);

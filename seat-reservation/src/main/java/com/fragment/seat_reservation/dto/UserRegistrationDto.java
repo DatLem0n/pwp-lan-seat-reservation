@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto
+public class UserRegistrationDto
 {
     private Long id;
     @NotEmpty
