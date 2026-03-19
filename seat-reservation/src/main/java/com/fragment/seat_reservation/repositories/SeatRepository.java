@@ -1,5 +1,7 @@
 package com.fragment.seat_reservation.repositories;
 
-public interface SeatRepository {
+import com.fragment.seat_reservation.entities.Seat;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SeatRepository extends JpaRepository<Seat, Long> {
 }
-// seat database queries
