@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserRegistrationDto
 {
-    private Long id;
     @NotEmpty
     private String username;
     @NotEmpty

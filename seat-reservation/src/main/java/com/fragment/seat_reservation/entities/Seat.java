@@ -1,6 +1,9 @@
 package com.fragment.seat_reservation.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(
@@ -9,11 +12,15 @@ import jakarta.persistence.*;
             @UniqueConstraint(columnNames = {"location_id", "seat_number"})
     }
 )
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Seat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @Column(length = 64)
     private String type;
@@ -29,5 +36,4 @@ public class Seat {
     @JoinColumn(name = "reserved_for_user_id")
     private User reservedFor;
 
-    // still needs getters/setters, equals() and hashcode()
 }
