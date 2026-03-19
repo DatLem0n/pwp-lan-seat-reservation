@@ -3,7 +3,9 @@ package com.fragment.seat_reservation.services;
 import com.fragment.seat_reservation.dto.EventDto;
 import com.fragment.seat_reservation.entities.Event;
 import com.fragment.seat_reservation.repositories.EventRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class EventService {
     private final EventRepository eventRepository;
 
