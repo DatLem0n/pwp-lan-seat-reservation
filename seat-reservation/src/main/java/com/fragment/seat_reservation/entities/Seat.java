@@ -36,4 +36,8 @@ public class Seat {
     @JoinColumn(name = "reserved_for_user_id")
     private User reservedFor;
 
+    public Boolean isReserved(){
+        return this.getReservedFor() == null;
+    }
+
 }
