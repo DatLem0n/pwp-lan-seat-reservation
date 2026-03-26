@@ -1,7 +1,6 @@
 package com.fragment.seat_reservation.services;
 
 import com.fragment.seat_reservation.dto.LocationDto;
-import com.fragment.seat_reservation.entities.Event;
 import com.fragment.seat_reservation.entities.Location;
 import com.fragment.seat_reservation.repositories.EventRepository;
 import com.fragment.seat_reservation.repositories.LocationRepository;
