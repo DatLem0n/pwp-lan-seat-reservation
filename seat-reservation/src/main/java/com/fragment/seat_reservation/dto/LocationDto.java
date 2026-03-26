@@ -1,6 +1,5 @@
 package com.fragment.seat_reservation.dto;
 
-import com.fragment.seat_reservation.entities.Event;
 import com.fragment.seat_reservation.entities.Seat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
