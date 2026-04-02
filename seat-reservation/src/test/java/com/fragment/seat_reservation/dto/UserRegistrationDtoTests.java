@@ -16,7 +16,7 @@ public class UserRegistrationDtoTests {
 
     @BeforeAll
     static void setup() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        factory = Validation.buildDefaultValidatorFactory();
     }
 
     @BeforeEach
@@ -32,18 +32,67 @@ public class UserRegistrationDtoTests {
     }
 
     @Test
-    void InvalidEmailTest() {
+    void InvalidEmailTest1() {
         UserRegistrationDto userDto = new UserRegistrationDto();
         userDto.setEmail("not real email");
         userDto.setUsername("Username-1");
         userDto.setFirstName("FirstName-1");
         userDto.setLastName("LastName-1");
         userDto.setPassword("password");
+        userDto.setPhoneNumber("0123456789");
         var violations = validator.validate(userDto);
 
         assertThat(violations).isNotEmpty();
         assertThat(violations.iterator().next().getMessage())
                 .isEqualTo("Invalid email address");
+    }
+
+    @Test
+    void InvalidEmailTest2() {
+        UserRegistrationDto userDto = new UserRegistrationDto();
+        userDto.setEmail("");
+        userDto.setUsername("Username-1");
+        userDto.setFirstName("FirstName-1");
+        userDto.setLastName("LastName-1");
+        userDto.setPassword("password");
+        userDto.setPhoneNumber("0123456789");
+        var violations = validator.validate(userDto);
+
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("Email should not be empty");
+    }
+
+    @Test
+    void InvalidPasswordTest() {
+        UserRegistrationDto userDto = new UserRegistrationDto();
+        userDto.setEmail("tester@mail.com");
+        userDto.setUsername("Username-1");
+        userDto.setFirstName("FirstName-1");
+        userDto.setLastName("LastName-1");
+        userDto.setPassword("");
+        userDto.setPhoneNumber("0123456789");
+        var violations = validator.validate(userDto);
+
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("Password should not be empty");
+    }
+
+    @Test
+    void InvalidPhoneTest() {
+        UserRegistrationDto userDto = new UserRegistrationDto();
+        userDto.setEmail("tester@mail.com");
+        userDto.setUsername("Username-1");
+        userDto.setFirstName("FirstName-1");
+        userDto.setLastName("LastName-1");
+        userDto.setPassword("password");
+        userDto.setPhoneNumber("");
+        var violations = validator.validate(userDto);
+
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("Phone number should not be empty");
     }
 
 }
