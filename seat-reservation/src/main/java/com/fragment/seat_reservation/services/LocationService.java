@@ -1,6 +1,7 @@
 package com.fragment.seat_reservation.services;
 
-import com.fragment.seat_reservation.dto.LocationDto;
+import com.fragment.seat_reservation.dto.DeletionDto;
+import com.fragment.seat_reservation.dto.LocationCreationDto;
 import com.fragment.seat_reservation.entities.Location;
 import com.fragment.seat_reservation.repositories.EventRepository;
 import com.fragment.seat_reservation.repositories.LocationRepository;
@@ -15,12 +16,16 @@ public class LocationService {
         this.eventRepository = eventRepository;
     }
 
-    public void saveLocation(LocationDto locationDto) {
+    public void saveLocation(LocationCreationDto locationCreationDto) {
         Location location = new Location();
-        location.setName(locationDto.getName());
-        location.setEvent(eventRepository.findEventById(locationDto.getEvent()));
+        location.setName(locationCreationDto.getName());
+        location.setEvent(eventRepository.findEventById(locationCreationDto.getEvent()));
 
         locationRepository.save(location);
+    }
+
+    public void deleteLocation(DeletionDto deletionDto) {
+        locationRepository.deleteById(deletionDto.getId());
     }
 
 }

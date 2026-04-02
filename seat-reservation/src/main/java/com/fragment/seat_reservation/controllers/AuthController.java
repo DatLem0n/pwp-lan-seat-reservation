@@ -1,5 +1,6 @@
 package com.fragment.seat_reservation.controllers;
 
+import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.services.UserService;
 import jakarta.validation.Valid;
@@ -21,6 +22,12 @@ public class AuthController {
         userService.saveUser(request);
         //AuthResponse response = authService.register(request);
         return ResponseEntity.status(201).body("all good");
+    }
+
+    @DeleteMapping("/register")
+    public ResponseEntity<?> delete(@Valid @RequestBody DeletionDto request) {
+        userService.deleteUser(request);
+        return ResponseEntity.status(200).body("User deleted");
     }
 }
 // login, registration endpoints. Auth logic in userService.

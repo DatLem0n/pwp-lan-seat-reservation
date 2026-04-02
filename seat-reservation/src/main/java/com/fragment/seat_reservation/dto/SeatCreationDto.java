@@ -19,6 +19,6 @@ public class SeatCreationDto {
 
     private Integer seatCount;
 
-    private Integer location;
+    private Long location;
 
 }
