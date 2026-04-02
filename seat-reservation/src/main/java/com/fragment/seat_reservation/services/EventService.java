@@ -1,5 +1,6 @@
 package com.fragment.seat_reservation.services;
 
+import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.EventDto;
 import com.fragment.seat_reservation.entities.Event;
 import com.fragment.seat_reservation.repositories.EventRepository;
@@ -20,6 +21,10 @@ public class EventService {
         event.setDate(eventDto.getDate());
 
         eventRepository.save(event);
+    }
+
+    public void deleteEvent(DeletionDto deletionDto) {
+        eventRepository.deleteById(deletionDto.getId());
     }
 
 }

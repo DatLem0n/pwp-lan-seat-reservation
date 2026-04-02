@@ -1,5 +1,6 @@
 package com.fragment.seat_reservation.services;
 
+import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.entities.User;
 import com.fragment.seat_reservation.repositories.UserRepository;
@@ -14,7 +15,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void saveUser (UserRegistrationDto userRegistrationDto) {
+    public void saveUser(UserRegistrationDto userRegistrationDto) {
        User user = new User();
        user.setUsername(userRegistrationDto.getUsername());
        user.setFirstName(userRegistrationDto.getFirstName());
@@ -29,6 +30,10 @@ public class UserService {
        user.setCreationDate(java.time.LocalDate.now());
 
        userRepository.save(user);
+    }
+
+    public void deleteUser(DeletionDto deletionDto) {
+        userRepository.deleteById(deletionDto.getId());
     }
 
 
