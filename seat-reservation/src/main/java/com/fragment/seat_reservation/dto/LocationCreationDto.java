@@ -20,7 +20,9 @@ public class LocationCreationDto {
     @NotEmpty(message = "Name is required")
     @Size(max = 64, message = "Name must not exceed 64 characters")
     private String name;
-    @NotNull
+
+    @NotNull(message = "Event id is required")
     private Long event;
+
     private Set<Seat> seats;
 }
