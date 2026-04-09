@@ -7,7 +7,10 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+import java.util.List;
+
+@RestController()
+@RequestMapping("/events")
 public class EventController {
 
     private final EventService eventService;
@@ -16,16 +19,31 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @PostMapping("/event")
+    @PostMapping()
     public ResponseEntity<?> createEvent(@Valid @RequestBody EventDto eventDto) {
         eventService.saveEvent(eventDto);
         return ResponseEntity.status(201).body("Event created!");
     }
 
-    @DeleteMapping("/event")
+    @DeleteMapping()
     public ResponseEntity<?> event(@Valid @RequestBody DeletionDto request) {
         eventService.deleteEvent(request);
         return ResponseEntity.status(201).body("Event removed");
+    }
+
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<List<EventDto>> getAllEvents() {
+        List<EventDto> events = eventService.findAll()
+                .stream()
+                .map(e -> new EventDto(e.getId(), e.getName(), e.getDescription(), e.getDate()))
+                .toList();
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EventDto> getEvent(@PathVariable Long id) {
+        EventDto event = eventService.findEvent(id);
+        return ResponseEntity.ok(event);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.fragment.seat_reservation.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class SeatCreationDto {
     @Size(max = 64)
     private String type;
 
+    @Positive
     private Integer seatCount;
 
     private Long location;

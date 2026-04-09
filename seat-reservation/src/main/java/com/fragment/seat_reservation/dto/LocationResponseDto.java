@@ -15,8 +15,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationCreationDto {
+public class LocationResponseDto {
 
+    private Long id;
     @NotEmpty(message = "Name is required")
     @Size(max = 64, message = "Name must not exceed 64 characters")
     private String name;
