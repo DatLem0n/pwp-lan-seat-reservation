@@ -3,6 +3,7 @@ package com.fragment.seat_reservation.services;
 import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.EventDto;
 import com.fragment.seat_reservation.entities.Event;
+import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
 import com.fragment.seat_reservation.mapper.EventMapper;
 import com.fragment.seat_reservation.repositories.EventRepository;
 import org.springframework.stereotype.Service;
@@ -28,16 +29,21 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public void deleteEvent(DeletionDto deletionDto) {
-        eventRepository.deleteById(deletionDto.getId());
+    public EventDto findEvent(Long id) {
+        return eventRepository.findById(id)
+                .map(event -> new EventDto(event.getId(), event.getName(), event.getDescription(), event.getDate()))
+                .orElseThrow(() -> new ResourceNotFoundException("Event with id " + id + " could not be found!"));
+    }
+
+    public void deleteEvent(Long id) {
+        if (!eventRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Cannot delete event with ID: " + id + " [Not found]!");
+        }
+        eventRepository.deleteById(id);
     }
 
     public List<Event> findAll() {
         return eventRepository.findAll();
-    }
-
-    public EventDto findEvent(Long id) {
-        return eventMapper.toDto(eventRepository.findEventById(id));
     }
 
 }
