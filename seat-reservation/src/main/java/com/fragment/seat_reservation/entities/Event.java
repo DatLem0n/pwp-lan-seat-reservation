@@ -26,5 +26,4 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Location> locations;
 
-    // still needs getters/setters, equals() and hashcode()
 }

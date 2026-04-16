@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeletionDto {
-    @Valid
-    @Positive
+
     private Long id;
 }

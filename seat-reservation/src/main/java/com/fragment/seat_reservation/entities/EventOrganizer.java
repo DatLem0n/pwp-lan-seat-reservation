@@ -10,8 +10,8 @@ public class EventOrganizer {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne private Event eventId;
-    @ManyToOne private User userId;
+    @ManyToOne private Event event;
+    @ManyToOne private User user;
 
     // still needs getters/setters, equals() and hashcode()
 }
