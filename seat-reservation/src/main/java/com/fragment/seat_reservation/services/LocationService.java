@@ -17,7 +17,8 @@ public class LocationService {
     private final EventRepository eventRepository;
     private final LocationMapper locationMapper;
 
-    public LocationService(LocationRepository locationRepository, EventRepository eventRepository, LocationMapper locationMapper) { this.locationRepository = locationRepository;
+    public LocationService(LocationRepository locationRepository, EventRepository eventRepository, LocationMapper locationMapper) {
+        this.locationRepository = locationRepository;
         this.eventRepository = eventRepository;
         this.locationMapper = locationMapper;
     }
@@ -30,8 +31,8 @@ public class LocationService {
         locationRepository.save(location);
     }
 
-    public void deleteLocation(DeletionDto deletionDto) {
-        locationRepository.deleteById(deletionDto.getId());
+    public void deleteLocation(Long eventId, Long locationId) {
+        locationRepository.deleteByEventIdAndId(eventId, locationId);
     }
 
     public List<LocationResponseDto> findAllByEventId(Long id) {
@@ -41,5 +42,9 @@ public class LocationService {
     public LocationResponseDto findLocation(Long id) {
         return locationMapper.toDto(locationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Location not found with id ")));
+    }
+
+    public LocationResponseDto findByEventIdAndLocationId(Long eventId, Long locationId) {
+        return locationMapper.toDto(locationRepository.findByEventIdAndId(eventId, locationId));
     }
 }
