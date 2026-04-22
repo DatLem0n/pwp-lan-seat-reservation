@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
-    List<Location> findAllByEventId(Long id);
-    Location findByEventIdAndId(Long eventId, Long id);
+    Optional<List<Location>> findAllByEventId(Long id);
+    Optional<Location> findByEventIdAndId(Long eventId, Long id);
     void deleteByEventIdAndId(Long eventId, Long id);
 }
 // location database queries

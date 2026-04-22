@@ -2,28 +2,34 @@ package com.fragment.seat_reservation.services;
 
 import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.SeatCreationDto;
+import com.fragment.seat_reservation.dto.SeatResponseDto;
+import com.fragment.seat_reservation.entities.Location;
 import com.fragment.seat_reservation.entities.Seat;
+import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
+import com.fragment.seat_reservation.mapper.SeatMapper;
 import com.fragment.seat_reservation.repositories.LocationRepository;
 import com.fragment.seat_reservation.repositories.SeatRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SeatService {
     private final SeatRepository seatRepository;
     private final LocationRepository locationRepository;
+    private final SeatMapper seatMapper;
 
-    public SeatService(SeatRepository seatRepository, LocationRepository locationRepository) {
+    public SeatService(SeatRepository seatRepository, LocationRepository locationRepository, SeatMapper seatMapper) {
         this.seatRepository = seatRepository;
         this.locationRepository = locationRepository;
+        this.seatMapper = seatMapper;
     }
 
     public void createSeats(SeatCreationDto seatCreationDto) {
 
-        var location = locationRepository.findById(seatCreationDto.getLocation())
-                .orElseThrow(() -> new IllegalArgumentException("Location not found with id " + seatCreationDto.getLocation()));
-
+        Location location = locationRepository.findById(seatCreationDto.getLocation())
+                .orElseThrow(() -> new ResourceNotFoundException("Location Not Found!"));
         var lastSeat = seatRepository.findTopByLocationIdOrderBySeatNumberDesc(seatCreationDto.getLocation());
-                //orElseThrow(() -> new IllegalArgumentException("No seats in location " + seatCreationDto.getLocation()));
 
         int lastSeatNumber = 0;
 
@@ -33,7 +39,7 @@ public class SeatService {
 
         for (int i = 0; i < seatCreationDto.getSeatCount(); i++) {
             Seat seat = new Seat();
-            seat.setSeatNumber(i + lastSeatNumber + 1);
+            seat.setSeatNumber(++lastSeatNumber);
             seat.setType(seatCreationDto.getType());
             seat.setLocation(location);
 
@@ -41,7 +47,16 @@ public class SeatService {
         }
     }
 
+    public List<SeatResponseDto> findAllByLocationId(Long locationId) {
+        return seatMapper.toDtoList(seatRepository.findAllByLocationId(locationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Location Not Found!")));
+    }
+
     public void deleteSeat(DeletionDto deletionDto) {
-        seatRepository.deleteById(deletionDto.getId());
+        Long id = deletionDto.getId();
+        if (!seatRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Seat Not Found!");
+        }
+        seatRepository.deleteById(id);
     }
 }

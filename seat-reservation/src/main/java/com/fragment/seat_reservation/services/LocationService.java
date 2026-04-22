@@ -1,9 +1,9 @@
 package com.fragment.seat_reservation.services;
 
-import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.LocationCreationDto;
 import com.fragment.seat_reservation.dto.LocationResponseDto;
 import com.fragment.seat_reservation.entities.Location;
+import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
 import com.fragment.seat_reservation.mapper.LocationMapper;
 import com.fragment.seat_reservation.repositories.EventRepository;
 import com.fragment.seat_reservation.repositories.LocationRepository;
@@ -32,19 +32,19 @@ public class LocationService {
     }
 
     public void deleteLocation(Long eventId, Long locationId) {
+        if (!locationRepository.existsById(locationId)) {
+            throw new ResourceNotFoundException("Location Not Found!");
+        }
         locationRepository.deleteByEventIdAndId(eventId, locationId);
     }
 
     public List<LocationResponseDto> findAllByEventId(Long id) {
-        return locationMapper.toDtoList(locationRepository.findAllByEventId(id));
-    }
-
-    public LocationResponseDto findLocation(Long id) {
-        return locationMapper.toDto(locationRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Location not found with id ")));
+        return locationMapper.toDtoList(locationRepository.findAllByEventId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event Not Found!")));
     }
 
     public LocationResponseDto findByEventIdAndLocationId(Long eventId, Long locationId) {
-        return locationMapper.toDto(locationRepository.findByEventIdAndId(eventId, locationId));
+        return locationMapper.toDto(locationRepository.findByEventIdAndId(eventId, locationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Location Not Found!")));
     }
 }

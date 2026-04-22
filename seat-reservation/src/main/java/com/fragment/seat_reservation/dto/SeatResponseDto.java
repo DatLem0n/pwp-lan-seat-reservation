@@ -1,13 +1,14 @@
 package com.fragment.seat_reservation.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class DeletionDto {
-
+public class SeatResponseDto {
     private Long id;
+    private Integer seatNumber;
+    private String type;
+    private Boolean reserved;
+
 }
