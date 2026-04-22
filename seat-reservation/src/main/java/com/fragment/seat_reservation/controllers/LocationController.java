@@ -1,18 +1,16 @@
 package com.fragment.seat_reservation.controllers;
 
-import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.LocationCreationDto;
 import com.fragment.seat_reservation.dto.LocationResponseDto;
 import com.fragment.seat_reservation.services.LocationService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/events/{eventId}/locations")
+@RequestMapping(path = "/events/{eventId}/locations")
 public class LocationController {
 
     private final LocationService locationService;

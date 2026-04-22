@@ -37,7 +37,7 @@ public class Seat {
     private User reservedFor;
 
     public Boolean isReserved(){
-        return this.getReservedFor() == null;
+        return this.getReservedFor() != null;
     }
 
 }

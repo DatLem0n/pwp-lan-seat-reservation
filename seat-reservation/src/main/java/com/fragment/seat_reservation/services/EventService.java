@@ -1,6 +1,5 @@
 package com.fragment.seat_reservation.services;
 
-import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.EventDto;
 import com.fragment.seat_reservation.entities.Event;
 import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
@@ -17,7 +16,7 @@ public class EventService {
 
     public EventService(EventRepository eventRepository, EventMapper eventMapper) {
         this.eventRepository = eventRepository;
-        this.eventMapper = eventMapper;
+        this.eventMapper =  eventMapper;
     }
 
     public void saveEvent(EventDto eventDto) {
@@ -30,20 +29,19 @@ public class EventService {
     }
 
     public EventDto findEvent(Long id) {
-        return eventRepository.findById(id)
-                .map(event -> new EventDto(event.getId(), event.getName(), event.getDescription(), event.getDate()))
-                .orElseThrow(() -> new ResourceNotFoundException("Event with id " + id + " could not be found!"));
+        return eventMapper.toDto(eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event Not Found!")));
     }
 
     public void deleteEvent(Long id) {
         if (!eventRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Cannot delete event with ID: " + id + " [Not found]!");
+            throw new ResourceNotFoundException("Event Not Found!");
         }
         eventRepository.deleteById(id);
     }
 
-    public List<Event> findAll() {
-        return eventRepository.findAll();
+    public List<EventDto> findAll() {
+        return eventMapper.toDtoList(eventRepository.findAll());
     }
 
 }

@@ -22,7 +22,6 @@ public class SeatCreationDto {
     @Positive(message = "Seat count must be positive")
     private Integer seatCount;
 
-    @NotNull(message = "Location id is required")
     private Long location;
 
 }
