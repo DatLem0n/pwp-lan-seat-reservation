@@ -1,6 +1,7 @@
 package com.fragment.seat_reservation.entities;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -47,6 +48,6 @@ public class User {
 
     private LocalDate dob;
     private LocalDate creationDate;
-    private LocalDate lastLogin;
+    private LocalDateTime lastLogin;
 
 }
