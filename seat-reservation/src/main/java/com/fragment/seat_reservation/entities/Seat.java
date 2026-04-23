@@ -22,6 +22,9 @@ public class Seat {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @Version
+    private Long version;
+
     @Column(length = 64)
     private String type;
 

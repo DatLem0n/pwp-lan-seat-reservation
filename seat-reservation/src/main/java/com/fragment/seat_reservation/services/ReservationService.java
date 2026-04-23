@@ -1,6 +1,9 @@
 package com.fragment.seat_reservation.services;
-import com.fragment.seat_reservation.dto.ReservationDto;
 import com.fragment.seat_reservation.entities.Seat;
+import com.fragment.seat_reservation.entities.User;
+import com.fragment.seat_reservation.exceptions.AlreadyExistsException;
+import com.fragment.seat_reservation.exceptions.NotResourceOwnerException;
+import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
 import com.fragment.seat_reservation.repositories.SeatRepository;
 import com.fragment.seat_reservation.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -17,18 +20,38 @@ public class ReservationService {
     }
 
     @Transactional
-    public void reserveSeat(ReservationDto reservationDto) {
-        Seat seat = seatRepository.findById(reservationDto.getSeatId())
-                .orElseThrow(() -> new IllegalArgumentException("Seat not found with id " + reservationDto.getSeatId()));
+    public void reserveSeat(Long seatId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
 
-        var user = userRepository.findById(reservationDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id " + reservationDto.getUserId()));
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Seat Not Found!"));
 
         if (seat.isReserved()) {
-            throw new IllegalStateException("Seat " + seat.getId() + " is already reserved");
+            throw new AlreadyExistsException("Seat is already reserved!");
         }
 
         seat.setReservedFor(user);
+        seatRepository.save(seat);
+    }
+
+    @Transactional
+    public void cancelReservation(Long seatId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Seat Not Found!"));
+
+        if (!seat.isReserved()) {
+            throw new AlreadyExistsException("Seat " + seat.getId() + " is not reserved!");
+        }
+
+        if (!seat.getReservedFor().getId().equals(user.getId())) {
+            throw new NotResourceOwnerException("Access Denied");
+        }
+
+        seat.setReservedFor(null);
         seatRepository.save(seat);
     }
 }
