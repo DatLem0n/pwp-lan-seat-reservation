@@ -9,6 +9,8 @@ import com.fragment.seat_reservation.mapper.UserProfileMapper;
 import com.fragment.seat_reservation.repositories.UserRepository;
 import com.fragment.seat_reservation.security.JwtService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -81,6 +83,20 @@ public class UserService {
             throw new NotResourceOwnerException("Access Denied");
         }
         return userProfileMapper.toDto(user);
+    }
+
+    @Transactional
+    public void changeUserData(UserProfileDto dataDto, Long userId, String username) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+        if (!user.getUsername().equals(username)) {
+            throw new NotResourceOwnerException("Access Denied");
+        }
+        user.setFirstName(dataDto.getFirstName());
+        user.setLastName(dataDto.getLastName());
+        user.setPhone(dataDto.getPhone());
+        user.setDob(dataDto.getDob());
+        userRepository.save(user);
     }
 
 

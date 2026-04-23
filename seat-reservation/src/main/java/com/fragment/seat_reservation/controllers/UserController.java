@@ -2,12 +2,11 @@ package com.fragment.seat_reservation.controllers;
 
 
 import com.fragment.seat_reservation.dto.UserProfileDto;
+import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.services.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +30,14 @@ public class UserController {
     public UserProfileDto getUserProfile(@PathVariable Long userId, Authentication authentication) {
         String username = authentication.getName();
         return userService.getUserProfile(userId, username);
+    }
+
+    @PutMapping(path = "/{userId}")
+    public ResponseEntity<?> changeUserData(UserProfileDto request,
+                                            @PathVariable Long userId, Authentication authentication) {
+        String username = authentication.getName();
+        userService.changeUserData(request, userId, username);
+        return ResponseEntity.status(201).body("Changes were successful");
     }
 
 }
