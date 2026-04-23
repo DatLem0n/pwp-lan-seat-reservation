@@ -14,7 +14,7 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @PostMapping("/reserve")
+    @PostMapping("/reservation")
     public ResponseEntity<?> reserveSeat(@PathVariable Long seatId, Authentication authentication){
         String username = authentication.getName();
         reservationService.reserveSeat(seatId, username);
@@ -22,7 +22,7 @@ public class ReservationController {
     }
 
 
-    @DeleteMapping("/reserve")
+    @DeleteMapping("/reservation")
     public ResponseEntity<?> removeReservation(@PathVariable Long seatId, Authentication authentication){
         String username = authentication.getName();
         reservationService.cancelReservation(seatId, username);

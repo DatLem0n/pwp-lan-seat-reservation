@@ -23,6 +23,6 @@ public class UserRegistrationDto
     @NotEmpty(message = "Password should not be empty")
     private String password;
     @NotEmpty(message = "Phone number should not be empty")
-    private String phoneNumber;
-    private LocalDate dateOfBirth;
+    private String phone;
+    private LocalDate dob;
 }

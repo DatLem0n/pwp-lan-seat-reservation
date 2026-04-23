@@ -39,7 +39,7 @@ public class UserRegistrationDtoTests {
         userDto.setFirstName("FirstName-1");
         userDto.setLastName("LastName-1");
         userDto.setPassword("password");
-        userDto.setPhoneNumber("0123456789");
+        userDto.setPhone("0123456789");
         var violations = validator.validate(userDto);
 
         assertThat(violations).isNotEmpty();
@@ -55,7 +55,7 @@ public class UserRegistrationDtoTests {
         userDto.setFirstName("FirstName-1");
         userDto.setLastName("LastName-1");
         userDto.setPassword("password");
-        userDto.setPhoneNumber("0123456789");
+        userDto.setPhone("0123456789");
         var violations = validator.validate(userDto);
 
         assertThat(violations).isNotEmpty();
@@ -71,7 +71,7 @@ public class UserRegistrationDtoTests {
         userDto.setFirstName("FirstName-1");
         userDto.setLastName("LastName-1");
         userDto.setPassword("");
-        userDto.setPhoneNumber("0123456789");
+        userDto.setPhone("0123456789");
         var violations = validator.validate(userDto);
 
         assertThat(violations).isNotEmpty();
@@ -87,7 +87,7 @@ public class UserRegistrationDtoTests {
         userDto.setFirstName("FirstName-1");
         userDto.setLastName("LastName-1");
         userDto.setPassword("password");
-        userDto.setPhoneNumber("");
+        userDto.setPhone("");
         var violations = validator.validate(userDto);
 
         assertThat(violations).isNotEmpty();
