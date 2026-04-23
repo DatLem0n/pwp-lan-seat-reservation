@@ -20,13 +20,13 @@ public class SeatController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<SeatResponseDto>> seat(@PathVariable Long locationId) {
+    public ResponseEntity<List<SeatResponseDto>> getSeats(@PathVariable Long locationId) {
         List<SeatResponseDto> seats = seatService.findAllByLocationId(locationId);
         return ResponseEntity.ok(seats);
     }
 
     @PostMapping()
-    public ResponseEntity<?> seat(@Valid @RequestBody SeatCreationDto request,
+    public ResponseEntity<?> createSeats(@Valid @RequestBody SeatCreationDto request,
                                   @PathVariable Long locationId) {
         request.setLocation(locationId);
         seatService.createSeats(request);
@@ -35,7 +35,7 @@ public class SeatController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<?> seat(@Valid @RequestBody DeletionDto request, @PathVariable Long locationId) {
+    public ResponseEntity<?> deleteSeat(@Valid @RequestBody DeletionDto request, @PathVariable Long locationId) {
         seatService.deleteSeat(request);
         Long id = request.getId();
         return ResponseEntity.status(201).body("Successfully deleted seat ID: " + id.toString());

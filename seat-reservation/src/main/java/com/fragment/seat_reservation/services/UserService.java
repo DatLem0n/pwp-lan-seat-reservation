@@ -5,8 +5,10 @@ import com.fragment.seat_reservation.dto.AuthResponseDto;
 import com.fragment.seat_reservation.dto.LoginRequestDto;
 import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.entities.User;
+import com.fragment.seat_reservation.exceptions.AlreadyExistsException;
 import com.fragment.seat_reservation.repositories.UserRepository;
 import com.fragment.seat_reservation.security.JwtService;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,10 +39,10 @@ public class UserService {
 
     public void saveUser(UserRegistrationDto userRegistrationDto) {
         if (userRepository.existsByUsername(userRegistrationDto.getUsername())) {
-            throw new IllegalArgumentException("Username is already taken");
+            throw new AlreadyExistsException("Username is already taken");
         }
         if (userRepository.existsByEmail(userRegistrationDto.getEmail())) {
-            throw new IllegalArgumentException("Email is already in use");
+            throw new AlreadyExistsException("Email is already in use");
         }
 
         User user = new User();
@@ -68,7 +70,7 @@ public class UserService {
                     new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword())
             );
         } catch (AuthenticationException ex) {
-            throw new IllegalArgumentException("Invalid username or password");
+            throw new BadCredentialsException("Invalid username or password");
         }
 
         return new AuthResponseDto(jwtService.generateToken(loginRequestDto.getUsername()));
