@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LAN Seat Reservation Client</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>LAN Seat Reservation</h1>
+      <p class="subtitle">Choose what you want to do</p>
+    </header>
+
+    <nav class="top-nav">
+      <a href="./index.html">Home</a>
+      <a href="./auth.html">Authentication</a>
+      <a href="./seats.html">Reserve Seats</a>
+      <a href="./manage.html">Manage Events</a>
+      <button id="logoutButton" type="button">Logout</button>
+    </nav>
+
+    <section class="card page-links">
+      <a class="page-link" href="./auth.html">
+        <h2>Authentication</h2>
+        <p>Login, register, and manage your session token.</p>
+      </a>
+      <a class="page-link" href="./seats.html">
+        <h2>Reserve Seats</h2>
+        <p>Browse seat squares by event/location and reserve from dialog.</p>
+      </a>
+      <a class="page-link" href="./manage.html">
+        <h2>Manage Events</h2>
+        <p>Create and delete events, locations, and seats.</p>
+      </a>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reserve Seats | LAN Seat Reservation</title>
+  <script>
+    (function () {
+      if (!localStorage.getItem("seatApiToken")) {
+        var next = "seats.html" + (window.location.search || "");
+        window.location.replace("./auth.html?next=" + encodeURIComponent(next));
+      }
+    }());
+  </script>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Reserve Seats</h1>
+      <p class="subtitle">Browse seats by event and location</p>
+    </header>
+
+    <nav class="top-nav">
+      <a href="./index.html">Home</a>
+      <a href="./auth.html">Authentication</a>
+      <a href="./seats.html">Reserve Seats</a>
+      <a href="./manage.html">Manage Events</a>
+    </nav>
+
+    <section class="card">
+      <h2>API Settings</h2>
+      <div class="row">
+        <label for="apiBaseUrl">Base URL</label>
+        <input id="apiBaseUrl" type="text" value="/api" placeholder="http://localhost:88/api">
+      </div>
+      <div class="row inline">
+        <span id="authStatus" class="status">Not logged in</span>
+        <button id="logoutButton" type="button">Logout</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Browse Seats</h2>
+      <div class="selectors">
+        <div class="row">
+          <label for="eventSelect">Event</label>
+          <select id="eventSelect"></select>
+          <button id="refreshEventsButton" type="button">Refresh events</button>
+        </div>
+        <div class="row">
+          <label for="locationSelect">Location</label>
+          <select id="locationSelect"></select>
+          <button id="refreshLocationsButton" type="button">Refresh locations</button>
+        </div>
+      </div>
+      <div class="row">
+        <button id="loadSeatsButton" type="button">Load seats</button>
+      </div>
+      <div id="seatsContainer" class="seats"></div>
+      <p class="muted">Click a seat square to reserve or cancel reservation.</p>
+    </section>
+
+    <section class="card">
+      <h2>Output</h2>
+      <pre id="output"></pre>
+    </section>
+  </main>
+
+  <dialog id="seatDialog">
+    <h3 id="seatDialogTitle">Seat</h3>
+    <p id="seatDialogInfo"></p>
+    <div class="row">
+      <button id="seatDialogReserveButton" type="button">Reserve seat</button>
+      <button id="seatDialogCloseButton" type="button">Close</button>
+    </div>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>
