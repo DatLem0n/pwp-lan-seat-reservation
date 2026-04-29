@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Authentication | LAN Seat Reservation</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Authentication</h1>
+      <p class="subtitle">Login and register users</p>
+    </header>
+
+    <nav class="top-nav">
+      <a href="./index.html">Home</a>
+      <a href="./auth.html">Authentication</a>
+      <a href="./seats.html">Reserve Seats</a>
+      <a href="./manage.html">Manage Events</a>
+    </nav>
+
+    <section class="card">
+      <h2>API Settings</h2>
+      <div class="row">
+        <label for="apiBaseUrl">Base URL</label>
+        <input id="apiBaseUrl" type="text" value="/api" placeholder="http://localhost:88/api">
+      </div>
+      <p class="muted">Use <code>/api</code> when served behind nginx.</p>
+    </section>
+
+    <section class="card">
+      <h2>Authentication</h2>
+      <div class="auth-grid">
+        <form id="loginForm">
+          <h3>Login</h3>
+          <label for="loginUsername">Username</label>
+          <input id="loginUsername" required>
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" required>
+          <button type="submit">Login</button>
+        </form>
+
+        <form id="registerForm">
+          <h3>Register</h3>
+          <label for="regUsername">Username</label>
+          <input id="regUsername" required>
+          <label for="regFirstName">First name</label>
+          <input id="regFirstName" required>
+          <label for="regLastName">Last name</label>
+          <input id="regLastName" required>
+          <label for="regEmail">Email</label>
+          <input id="regEmail" type="email" required>
+          <label for="regPassword">Password</label>
+          <input id="regPassword" type="password" required>
+          <label for="regPhone">Phone</label>
+          <input id="regPhone" required>
+          <label for="regDob">Date of birth</label>
+          <input id="regDob" type="date">
+          <button type="submit">Register</button>
+        </form>
+      </div>
+      <div class="row inline">
+        <span id="authStatus" class="status">Not logged in</span>
+        <button id="logoutButton" type="button">Logout</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Output</h2>
+      <pre id="output"></pre>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
