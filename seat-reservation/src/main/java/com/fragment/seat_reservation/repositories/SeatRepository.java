@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    Optional<List<Seat>> findAllByLocationId(Long locationId);
+    List<Seat> findAllByLocationId(Long locationId);
     Seat findTopByLocationIdOrderBySeatNumberDesc (Long id);
 }

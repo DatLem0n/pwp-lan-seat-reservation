@@ -2,7 +2,6 @@ package com.fragment.seat_reservation.services;
 import com.fragment.seat_reservation.entities.Seat;
 import com.fragment.seat_reservation.entities.User;
 import com.fragment.seat_reservation.exceptions.AlreadyExistsException;
-import com.fragment.seat_reservation.exceptions.NotResourceOwnerException;
 import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
 import com.fragment.seat_reservation.repositories.SeatRepository;
 import com.fragment.seat_reservation.repositories.UserRepository;
@@ -13,10 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationService {
     private final SeatRepository seatRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public ReservationService(SeatRepository seatRepository, UserRepository userRepository) {
+    public ReservationService(SeatRepository seatRepository,
+                              UserRepository userRepository, UserService userService) {
         this.seatRepository = seatRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Transactional
@@ -37,7 +39,7 @@ public class ReservationService {
 
     @Transactional
     public void cancelReservation(Long seatId, String username) {
-        User user = userRepository.findByUsername(username)
+        userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
 
         Seat seat = seatRepository.findById(seatId)
@@ -47,10 +49,7 @@ public class ReservationService {
             throw new AlreadyExistsException("Seat " + seat.getId() + " is not reserved!");
         }
 
-        if (!seat.getReservedFor().getId().equals(user.getId())) {
-            throw new NotResourceOwnerException("Access Denied");
-        }
-
+        userService.validatePermission(seat.getReservedFor(), username);
         seat.setReservedFor(null);
         seatRepository.save(seat);
     }

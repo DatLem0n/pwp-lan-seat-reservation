@@ -2,7 +2,6 @@ package com.fragment.seat_reservation.controllers;
 
 
 import com.fragment.seat_reservation.dto.UserProfileDto;
-import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping(path = "/{userId}")
-    public ResponseEntity<?> changeUserData(UserProfileDto request,
+    public ResponseEntity<?> changeUserData(@RequestBody UserProfileDto request,
                                             @PathVariable Long userId, Authentication authentication) {
         String username = authentication.getName();
         userService.changeUserData(request, userId, username);
