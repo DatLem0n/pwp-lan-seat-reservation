@@ -7,6 +7,7 @@ import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,9 +32,10 @@ public class AuthController {
     }
 
     @DeleteMapping("/register")
-    public ResponseEntity<?> delete(@Valid @RequestBody DeletionDto request) {
-        userService.deleteUser(request);
-        return ResponseEntity.status(200).body("User deleted");
+    public ResponseEntity<?> delete(@Valid @RequestBody DeletionDto request, Authentication authentication) {
+        String username = authentication.getName();
+        userService.deleteUser(request, username);
+        return ResponseEntity.noContent().build();
     }
 }
 // login, registration endpoints. Auth logic in userService.

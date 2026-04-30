@@ -2,11 +2,13 @@ package com.fragment.seat_reservation.services;
 
 import com.fragment.seat_reservation.dto.LocationCreationDto;
 import com.fragment.seat_reservation.dto.LocationResponseDto;
+import com.fragment.seat_reservation.entities.Event;
 import com.fragment.seat_reservation.entities.Location;
 import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
 import com.fragment.seat_reservation.mapper.LocationMapper;
 import com.fragment.seat_reservation.repositories.EventRepository;
 import com.fragment.seat_reservation.repositories.LocationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,24 +25,35 @@ public class LocationService {
         this.locationMapper = locationMapper;
     }
 
-    public void saveLocation(LocationCreationDto locationCreationDto) {
+    public Location saveLocation(LocationCreationDto locationCreationDto) {
         Location location = new Location();
         location.setName(locationCreationDto.getName());
-        location.setEvent(eventRepository.findEventById(locationCreationDto.getEvent()));
+        Long eventId = locationCreationDto.getEvent();
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event Not Found!"));
+        location.setEvent(event);
 
         locationRepository.save(location);
+        return location;
     }
 
+    @Transactional
     public void deleteLocation(Long eventId, Long locationId) {
-        if (!locationRepository.existsById(locationId)) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event Not Found!"));
+        boolean removed = event.getLocations().removeIf(loc -> loc.getId().equals(locationId));
+        if (!removed) {
             throw new ResourceNotFoundException("Location Not Found!");
         }
-        locationRepository.deleteByEventIdAndId(eventId, locationId);
+        eventRepository.save(event);
     }
 
     public List<LocationResponseDto> findAllByEventId(Long id) {
-        return locationMapper.toDtoList(locationRepository.findAllByEventId(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Event Not Found!")));
+        if (!eventRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Event Not Found!");
+        }
+        List<Location> locations = locationRepository.findAllByEventId(id);
+        return locationMapper.toDtoList(locations);
     }
 
     public LocationResponseDto findByEventIdAndLocationId(Long eventId, Long locationId) {

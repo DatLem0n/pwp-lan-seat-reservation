@@ -2,11 +2,14 @@ package com.fragment.seat_reservation.controllers;
 
 import com.fragment.seat_reservation.dto.LocationCreationDto;
 import com.fragment.seat_reservation.dto.LocationResponseDto;
+import com.fragment.seat_reservation.entities.Location;
 import com.fragment.seat_reservation.services.LocationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -22,14 +25,20 @@ public class LocationController {
     @PostMapping()
     public ResponseEntity<?> location(@PathVariable Long eventId, @Valid @RequestBody LocationCreationDto request) {
         request.setEvent(eventId);
-        locationService.saveLocation(request);
-        return ResponseEntity.status(201).body("location created");
+        Location savedLocation = locationService.saveLocation(request);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedLocation.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @DeleteMapping(path = "/{locationId}")
     public ResponseEntity<?> deleteLocation(@PathVariable Long eventId, @PathVariable Long locationId) {
         locationService.deleteLocation(eventId, locationId);
-        return ResponseEntity.status(200).body("location removed");
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(produces = "application/json")

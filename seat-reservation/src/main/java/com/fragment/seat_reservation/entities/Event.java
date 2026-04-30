@@ -2,17 +2,21 @@ package com.fragment.seat_reservation.entities;
 
 import java.time.LocalDate;
 import java.util.Set;
-
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "events")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(length = 64, nullable = false)

@@ -38,6 +38,6 @@ public class SeatController {
     public ResponseEntity<?> deleteSeat(@Valid @RequestBody DeletionDto request, @PathVariable Long locationId) {
         seatService.deleteSeat(request);
         Long id = request.getId();
-        return ResponseEntity.status(201).body("Successfully deleted seat ID: " + id.toString());
+        return ResponseEntity.status(200).body("Successfully deleted seat ID: " + id.toString());
     }
 }

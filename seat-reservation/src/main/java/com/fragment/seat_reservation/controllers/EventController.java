@@ -1,11 +1,14 @@
 package com.fragment.seat_reservation.controllers;
 
 import com.fragment.seat_reservation.dto.EventDto;
+import com.fragment.seat_reservation.entities.Event;
 import com.fragment.seat_reservation.services.EventService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController()
@@ -20,14 +23,20 @@ public class EventController {
 
     @PostMapping()
     public ResponseEntity<?> createEvent(@Valid @RequestBody EventDto eventDto) {
-        eventService.saveEvent(eventDto);
-        return ResponseEntity.status(201).body("Event created!");
+        Event savedEvent = eventService.saveEvent(eventDto);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedEvent.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
-        return ResponseEntity.ok("Event removed");
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(produces = "application/json")

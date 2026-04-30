@@ -8,9 +8,7 @@ import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
 import com.fragment.seat_reservation.mapper.UserProfileMapper;
 import com.fragment.seat_reservation.repositories.UserRepository;
 import com.fragment.seat_reservation.security.JwtService;
-import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -79,9 +77,8 @@ public class UserService {
     public UserProfileDto getUserProfile(Long userId, String username) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-        if (!user.getUsername().equals(username)) {
-            throw new NotResourceOwnerException("Access Denied");
-        }
+
+        validatePermission(user, username);
         return userProfileMapper.toDto(user);
     }
 
@@ -89,19 +86,27 @@ public class UserService {
     public void changeUserData(UserProfileDto dataDto, Long userId, String username) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-        if (!user.getUsername().equals(username)) {
-            throw new NotResourceOwnerException("Access Denied");
+
+        validatePermission(user, username);
+        if (dataDto.getFirstName() != null) {
+            user.setFirstName(dataDto.getFirstName());
         }
-        user.setFirstName(dataDto.getFirstName());
-        user.setLastName(dataDto.getLastName());
-        user.setPhone(dataDto.getPhone());
-        user.setDob(dataDto.getDob());
+        if (dataDto.getLastName() != null) {
+            user.setLastName(dataDto.getLastName());
+        }
+        if (dataDto.getPhone() != null) {
+            user.setPhone(dataDto.getPhone());
+        }
         userRepository.save(user);
     }
 
+    @Transactional
+    public void deleteUser(DeletionDto deletionDto, String username) {
+        User user = userRepository.findById(deletionDto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
 
-    public void deleteUser(DeletionDto deletionDto) {
-        userRepository.deleteById(deletionDto.getId());
+        validatePermission(user, username);
+        userRepository.deleteById(user.getId());
     }
 
     @Transactional
@@ -118,6 +123,18 @@ public class UserService {
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
         return new AuthResponseDto(jwtService.generateToken(loginRequestDto.getUsername()));
+    }
+
+    public void validatePermission(User user, String authenticatedUsername) {
+        /*
+        user is the resource owner and authenticatedUsername is user (username) wanting to access this resource.
+         */
+        boolean isOwner = user.getUsername().equals(authenticatedUsername);
+        boolean isAdmin = user.isAdmin();
+
+        if (!isOwner && !isAdmin) {
+            throw new NotResourceOwnerException("Access Denied");
+        }
     }
 }
 // business logic for users / auth

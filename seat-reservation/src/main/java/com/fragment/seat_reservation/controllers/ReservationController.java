@@ -26,6 +26,6 @@ public class ReservationController {
     public ResponseEntity<?> removeReservation(@PathVariable Long seatId, Authentication authentication){
         String username = authentication.getName();
         reservationService.cancelReservation(seatId, username);
-        return ResponseEntity.status(201).body("Seat reservation removed");
+        return ResponseEntity.noContent().build();
     }
 }
