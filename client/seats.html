@@ -8,9 +8,14 @@
     (function () {
       if (!localStorage.getItem("seatApiToken")) {
         var next = "seats.html" + (window.location.search || "");
-        window.location.replace("./auth.html?next=" + encodeURIComponent(next));
+        window.location.replace("./login.html?next=" + encodeURIComponent(next));
       }
     }());
+  </script>
+  <script>
+    if (localStorage.getItem("seatApiToken")) {
+      document.documentElement.classList.add("is-authenticated");
+    }
   </script>
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -23,22 +28,12 @@
 
     <nav class="top-nav">
       <a href="./index.html">Home</a>
-      <a href="./auth.html">Authentication</a>
+      <a href="./login.html">Login</a>
+      <a href="./register.html">Register</a>
       <a href="./seats.html">Reserve Seats</a>
       <a href="./manage.html">Manage Events</a>
+      <button id="logoutButton" type="button">Logout</button>
     </nav>
-
-    <section class="card">
-      <h2>API Settings</h2>
-      <div class="row">
-        <label for="apiBaseUrl">Base URL</label>
-        <input id="apiBaseUrl" type="text" value="/api" placeholder="http://localhost:88/api">
-      </div>
-      <div class="row inline">
-        <span id="authStatus" class="status">Not logged in</span>
-        <button id="logoutButton" type="button">Logout</button>
-      </div>
-    </section>
 
     <section class="card">
       <h2>Browse Seats</h2>

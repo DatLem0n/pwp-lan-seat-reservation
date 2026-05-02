@@ -2,6 +2,19 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+html.is-authenticated a[href*="login.html"],
+html.is-authenticated a[href*="register.html"] {
+  display: none !important;
+}
+
+html:not(.is-authenticated) .auth-required {
+  display: none !important;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
