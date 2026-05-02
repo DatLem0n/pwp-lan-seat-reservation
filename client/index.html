@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LAN Seat Reservation Client</title>
+  <script>
+    if (localStorage.getItem("seatApiToken")) {
+      document.documentElement.classList.add("is-authenticated");
+    }
+  </script>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -15,22 +20,26 @@
 
     <nav class="top-nav">
       <a href="./index.html">Home</a>
-      <a href="./auth.html">Authentication</a>
-      <a href="./seats.html">Reserve Seats</a>
-      <a href="./manage.html">Manage Events</a>
+      <a href="./register.html">Register</a>
+      <a class="auth-required" href="./seats.html">Reserve Seats</a>
+      <a class="auth-required" href="./manage.html">Manage Events</a>
       <button id="logoutButton" type="button">Logout</button>
     </nav>
 
     <section class="card page-links">
-      <a class="page-link" href="./auth.html">
-        <h2>Authentication</h2>
-        <p>Login, register, and manage your session token.</p>
+      <a class="page-link" href="./login.html">
+        <h2>Login</h2>
+        <p>Sign in and get a session token.</p>
       </a>
-      <a class="page-link" href="./seats.html">
+      <a class="page-link" href="./register.html">
+        <h2>Register</h2>
+        <p>Create a new user account.</p>
+      </a>
+      <a class="page-link auth-required" href="./seats.html">
         <h2>Reserve Seats</h2>
         <p>Browse seat squares by event/location and reserve from dialog.</p>
       </a>
-      <a class="page-link" href="./manage.html">
+      <a class="page-link auth-required" href="./manage.html">
         <h2>Manage Events</h2>
         <p>Create and delete events, locations, and seats.</p>
       </a>

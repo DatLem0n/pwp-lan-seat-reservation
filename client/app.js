@@ -1,9 +1,19 @@
 const TOKEN_KEY = "seatApiToken";
 const BASE_URL_KEY = "seatApiBaseUrl";
 
+function defaultApiBaseUrl() {
+  // Prefer same-origin API under /api when served via http(s).
+  // If opened from file:// (origin "null"), fall back to a relative /api.
+  const origin = window.location.origin;
+  if (origin && origin !== "null" && /^https?:/.test(window.location.protocol)) {
+    return `${origin}/api`;
+  }
+  return "/api";
+}
+
 const state = {
   token: localStorage.getItem(TOKEN_KEY) || "",
-  baseUrl: localStorage.getItem(BASE_URL_KEY) || "/api",
+  baseUrl: localStorage.getItem(BASE_URL_KEY) || defaultApiBaseUrl(),
   events: [],
   locations: [],
   seats: [],
@@ -20,7 +30,7 @@ function isProtectedPage() {
 
 function redirectToLogin() {
   const next = `${currentPage}${window.location.search || ""}`;
-  window.location.href = `./auth.html?next=${encodeURIComponent(next)}`;
+  window.location.href = `./login.html?next=${encodeURIComponent(next)}`;
 }
 
 function readNextPageFromQuery() {
@@ -49,13 +59,15 @@ function setAuthStatus() {
   if (authStatus) {
     authStatus.textContent = state.token ? "Logged in" : "Not logged in";
   }
+  updateAuthStateClass();
   updateAuthActionButton();
+  updateAuthLinks();
 }
 
 function getBaseUrl() {
   const input = getEl("apiBaseUrl");
   const rawValue = input ? input.value.trim() : state.baseUrl;
-  const normalized = (rawValue || "/api").replace(/\/$/, "");
+  const normalized = (rawValue || defaultApiBaseUrl()).replace(/\/$/, "");
   state.baseUrl = normalized;
   localStorage.setItem(BASE_URL_KEY, normalized);
   return normalized;
@@ -224,7 +236,10 @@ async function reserveSeat(seatId) {
     setOutput("Login required to reserve seats.");
     return;
   }
-  const result = await apiRequest(`/events/${eventId}/locations/${locationId}/seats/${seatId}/reserve`, { method: "POST" });
+  const result = await apiRequest(
+    `/events/${eventId}/locations/${locationId}/seats/${seatId}/reservation`,
+    { method: "POST" }
+  );
   setOutput("Seat reserved", result);
   closeSeatDialog();
   await loadSeats();
@@ -237,8 +252,8 @@ async function cancelReservation(seatId) {
     setOutput("Login required to cancel reservations.");
     return;
   }
-  const result = await apiRequest(`/events/${eventId}/locations/${locationId}/seats/${seatId}/reserve`, { method: "DELETE" });
-  setOutput("Reservation removed", result);
+  await apiRequest(`/events/${eventId}/locations/${locationId}/seats/${seatId}/reservation`, { method: "DELETE" });
+  setOutput("Reservation removed");
   closeSeatDialog();
   await loadSeats();
 }
@@ -282,7 +297,7 @@ async function onRegister(event) {
     lastName: getEl("regLastName").value.trim(),
     email: getEl("regEmail").value.trim(),
     password: getEl("regPassword").value,
-    phoneNumber: getEl("regPhone").value.trim(),
+    phone: getEl("regPhone").value.trim(),
     dateOfBirth: getEl("regDob").value || null
   };
   const result = await apiRequest("/auth/register", {
@@ -472,7 +487,7 @@ function initSharedControls() {
       if (state.token) {
         onLogout();
       } else {
-        window.location.href = "./auth.html";
+        window.location.href = "./login.html";
       }
     });
   }
@@ -486,13 +501,24 @@ function updateAuthActionButton() {
   logoutButton.textContent = state.token ? "Logout" : "Login";
 }
 
+function updateAuthStateClass() {
+  document.documentElement.classList.toggle("is-authenticated", Boolean(state.token));
+}
+
+function updateAuthLinks() {
+  const isAuthenticated = Boolean(state.token);
+  document.querySelectorAll('a[href*="login.html"], a[href*="register.html"]').forEach((link) => {
+    link.hidden = isAuthenticated;
+  });
+}
+
 function bootstrap() {
   if (isProtectedPage() && !state.token) {
     redirectToLogin();
     return;
   }
 
-  if (currentPage === "auth.html" && state.token) {
+  if ((currentPage === "login.html" || currentPage === "register.html") && state.token) {
     window.location.href = "./seats.html";
     return;
   }
