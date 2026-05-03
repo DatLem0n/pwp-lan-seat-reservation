@@ -1,8 +1,11 @@
 package com.fragment.seat_reservation.controllers;
 
+import com.fragment.seat_reservation.dto.ReservationDto;
+import com.fragment.seat_reservation.entities.Seat;
 import com.fragment.seat_reservation.services.ReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.memory.UserAttribute;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,5 +30,10 @@ public class ReservationController {
         String username = authentication.getName();
         reservationService.cancelReservation(seatId, username);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/reservation")
+    public ResponseEntity<ReservationDto> getReservation(@PathVariable Long seatId) {
+        return ResponseEntity.ok(reservationService.getReservation(seatId));
     }
 }
