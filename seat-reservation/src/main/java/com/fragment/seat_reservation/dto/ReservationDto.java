@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationDto {
     private Long seatNumber;
-    private String seatType;
+    private String type;
     private String reservedFor;
 }
