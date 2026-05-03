@@ -57,7 +57,7 @@ public class UserService {
         user.setEmail(userRegistrationDto.getEmail());
         user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
         user.setPhone(userRegistrationDto.getPhone());
-        user.setDob(userRegistrationDto.getDob());
+        user.setDob(userRegistrationDto.getDateOfBirth());
         user.setLastLogin(null);
         user.setAdmin(true);
         user.setCreationDate(LocalDate.now());
