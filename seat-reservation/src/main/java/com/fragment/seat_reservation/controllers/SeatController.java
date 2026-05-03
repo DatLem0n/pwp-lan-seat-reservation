@@ -1,10 +1,13 @@
 package com.fragment.seat_reservation.controllers;
 
 import com.fragment.seat_reservation.dto.DeletionDto;
+import com.fragment.seat_reservation.dto.ReservationDto;
 import com.fragment.seat_reservation.dto.SeatCreationDto;
 import com.fragment.seat_reservation.dto.SeatResponseDto;
+import com.fragment.seat_reservation.services.ReservationService;
 import com.fragment.seat_reservation.services.SeatService;
 import jakarta.validation.Valid;
+import org.hibernate.validator.constraints.ParameterScriptAssert;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +17,11 @@ import java.util.List;
 @RequestMapping(path = "/events/*/locations/{locationId}/seats")
 public class SeatController {
     private final SeatService seatService;
+    private final ReservationService reservationService;
 
-    public SeatController(SeatService seatService) {
+    public SeatController(SeatService seatService, ReservationService reservationService) {
         this.seatService = seatService;
+        this.reservationService = reservationService;
     }
 
     @GetMapping()
@@ -39,5 +44,10 @@ public class SeatController {
         seatService.deleteSeat(request);
         Long id = request.getId();
         return ResponseEntity.status(200).body("Successfully deleted seat ID: " + id.toString());
+    }
+
+    @GetMapping("/reservations")
+    public ResponseEntity<List<ReservationDto>> getReservations(@PathVariable Long locationId) {
+        return ResponseEntity.ok(reservationService.getAllReservations(locationId));
     }
 }
