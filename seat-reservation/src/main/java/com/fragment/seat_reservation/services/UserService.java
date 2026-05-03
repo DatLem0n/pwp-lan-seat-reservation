@@ -6,6 +6,7 @@ import com.fragment.seat_reservation.exceptions.AlreadyExistsException;
 import com.fragment.seat_reservation.exceptions.NotResourceOwnerException;
 import com.fragment.seat_reservation.exceptions.ResourceNotFoundException;
 import com.fragment.seat_reservation.mapper.UserProfileMapper;
+import com.fragment.seat_reservation.repositories.SeatRepository;
 import com.fragment.seat_reservation.repositories.UserRepository;
 import com.fragment.seat_reservation.security.JwtService;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,18 +29,21 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserProfileMapper userProfileMapper;
+    private final SeatRepository seatRepository;
 
     public UserService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
             JwtService jwtService,
-            UserProfileMapper userProfileMapper) {
+            UserProfileMapper userProfileMapper,
+            SeatRepository seatRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userProfileMapper = userProfileMapper;
+        this.seatRepository = seatRepository;
     }
 
     public void saveUser(UserRegistrationDto userRegistrationDto) {
@@ -106,7 +110,8 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
 
         validatePermission(user, username);
-        userRepository.deleteById(user.getId());
+        seatRepository.clearReservationsForUser(user);
+        userRepository.delete(user);
     }
 
     @Transactional
