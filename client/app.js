@@ -217,6 +217,7 @@ function renderReservations(reservations) {
 function userRowHtml(user) {
   return `
     <tr>
+      <td>${escapeHtml(user.id)}</td>
       <td>${escapeHtml(user.username)}</td>
       <td>${escapeHtml(user.firstName)}</td>
       <td>${escapeHtml(user.lastName)}</td>
@@ -241,6 +242,7 @@ function renderUsers(users) {
     <table class="data-table">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Username</th>
           <th>First name</th>
           <th>Last name</th>
