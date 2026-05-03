@@ -85,6 +85,19 @@
     </section>
 
     <section class="card">
+      <h2>Reservations</h2>
+      <div class="row">
+        <button id="loadReservationsButton" type="button">Load location reservations</button>
+      </div>
+      <form id="getReservationForm" class="inline-form">
+        <label for="reservationSeatId">Seat ID</label>
+        <input id="reservationSeatId" type="number" min="1" required>
+        <button type="submit">Load seat reservation</button>
+      </form>
+      <div id="reservationsContainer" class="reservations"></div>
+    </section>
+
+    <section class="card">
       <h2>Output</h2>
       <pre id="output"></pre>
     </section>
