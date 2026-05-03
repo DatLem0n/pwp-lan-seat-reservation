@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ReservationMapper {
-    @Mapping(target = "reservedFor", expression = "java(seat.getReservedFor().getUsername()")
+    @Mapping(target = "reservedFor", expression = "java(seat.getReservedFor().getUsername())")
     ReservationDto toDto(Seat seat);
     List<ReservationDto> toDtoList(List<Seat> seats);
 }
