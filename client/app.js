@@ -169,6 +169,42 @@ function renderSeats() {
   container.innerHTML = state.seats.map(seatCardHtml).join("");
 }
 
+function reservationRowHtml(reservation) {
+  return `
+    <tr>
+      <td>${reservation.seatNumber ?? ""}</td>
+      <td>${reservation.type ?? ""}</td>
+      <td>${reservation.reservedFor || "Not reserved"}</td>
+    </tr>
+  `;
+}
+
+function renderReservations(reservations) {
+  const container = getEl("reservationsContainer");
+  if (!container) {
+    return;
+  }
+  const reservationList = Array.isArray(reservations) ? reservations : [reservations];
+  if (reservationList.length === 0) {
+    container.innerHTML = '<p class="muted">No reservations found for the selected location.</p>';
+    return;
+  }
+  container.innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Seat</th>
+          <th>Type</th>
+          <th>Reserved for</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${reservationList.map(reservationRowHtml).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
 async function loadEvents() {
   const events = await apiRequest("/events");
   state.events = Array.isArray(events) ? events : [];
@@ -388,6 +424,33 @@ async function createSeats(event) {
   setOutput("Seats created", result);
 }
 
+async function loadReservations() {
+  const eventId = selectedEventId();
+  const locationId = selectedLocationId();
+  if (!eventId || !locationId) {
+    setOutput("Select event and location first.");
+    return;
+  }
+  const reservations = await apiRequest(`/events/${eventId}/locations/${locationId}/seats/reservations`);
+  const reservationList = Array.isArray(reservations) ? reservations : [];
+  renderReservations(reservationList);
+  setOutput("Loaded reservations", reservationList);
+}
+
+async function loadSeatReservation(event) {
+  event.preventDefault();
+  const eventId = selectedEventId();
+  const locationId = selectedLocationId();
+  const seatId = getEl("reservationSeatId").value;
+  if (!eventId || !locationId) {
+    setOutput("Select event and location first.");
+    return;
+  }
+  const reservation = await apiRequest(`/events/${eventId}/locations/${locationId}/seats/${seatId}/reservation`);
+  renderReservations(reservation);
+  setOutput("Loaded seat reservation", reservation);
+}
+
 async function runSafely(fn) {
   try {
     await fn();
@@ -462,6 +525,8 @@ function initManagePage() {
   const createLocationForm = getEl("createLocationForm");
   const deleteLocationButton = getEl("deleteLocationButton");
   const createSeatsForm = getEl("createSeatsForm");
+  const loadReservationsButton = getEl("loadReservationsButton");
+  const getReservationForm = getEl("getReservationForm");
 
   if (createEventForm) {
     createEventForm.addEventListener("submit", (event) => runSafely(() => createEvent(event)));
@@ -477,6 +542,12 @@ function initManagePage() {
   }
   if (createSeatsForm) {
     createSeatsForm.addEventListener("submit", (event) => runSafely(() => createSeats(event)));
+  }
+  if (loadReservationsButton) {
+    loadReservationsButton.addEventListener("click", () => runSafely(loadReservations));
+  }
+  if (getReservationForm) {
+    getReservationForm.addEventListener("submit", (event) => runSafely(() => loadSeatReservation(event)));
   }
 }
 
