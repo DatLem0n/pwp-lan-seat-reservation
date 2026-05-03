@@ -30,12 +30,5 @@ public class AuthController {
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
         return ResponseEntity.ok(userService.login(request));
     }
-
-    @DeleteMapping("/register")
-    public ResponseEntity<?> delete(@Valid @RequestBody DeletionDto request, Authentication authentication) {
-        String username = authentication.getName();
-        userService.deleteUser(request, username);
-        return ResponseEntity.noContent().build();
-    }
 }
 // login, registration endpoints. Auth logic in userService.

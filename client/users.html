@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Management | LAN Seat Reservation</title>
+  <script>
+    (function () {
+      if (!localStorage.getItem("seatApiToken")) {
+        var next = "users.html" + (window.location.search || "");
+        window.location.replace("./login.html?next=" + encodeURIComponent(next));
+      }
+    }());
+  </script>
+  <script>
+    if (localStorage.getItem("seatApiToken")) {
+      document.documentElement.classList.add("is-authenticated");
+    }
+  </script>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>User Management</h1>
+      <p class="subtitle">View profiles and update user details</p>
+    </header>
+
+    <nav class="top-nav">
+      <a href="./index.html">Home</a>
+      <a href="./login.html">Login</a>
+      <a href="./register.html">Register</a>
+      <a href="./seats.html">Reserve Seats</a>
+      <a href="./manage.html">Manage Events</a>
+      <a href="./users.html">Manage Users</a>
+      <button id="logoutButton" type="button">Logout</button>
+    </nav>
+
+    <section class="card">
+      <h2>Users</h2>
+      <div class="row">
+        <button id="loadUsersButton" type="button">Load all users</button>
+      </div>
+      <form id="getUserForm" class="inline-form">
+        <label for="userId">User ID</label>
+        <input id="userId" type="number" min="1" required>
+        <button type="submit">Load user</button>
+      </form>
+      <div id="usersContainer" class="users"></div>
+    </section>
+
+    <section class="card">
+      <h2>Update User</h2>
+      <form id="updateUserForm">
+        <label for="updateUserId">User ID</label>
+        <input id="updateUserId" type="number" min="1" required>
+        <label for="updateFirstName">First name</label>
+        <input id="updateFirstName">
+        <label for="updateLastName">Last name</label>
+        <input id="updateLastName">
+        <label for="updatePhone">Phone</label>
+        <input id="updatePhone">
+        <button type="submit">Update user</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Delete User</h2>
+      <form id="deleteUserForm" class="inline-form">
+        <label for="deleteUserId">User ID</label>
+        <input id="deleteUserId" type="number" min="1" required>
+        <button class="danger" type="submit">Delete user</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Output</h2>
+      <pre id="output"></pre>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

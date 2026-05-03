@@ -22,7 +22,7 @@ const state = {
 
 const getEl = (id) => document.getElementById(id);
 const currentPage = window.location.pathname.split("/").pop() || "index.html";
-const protectedPages = new Set(["seats.html", "manage.html"]);
+const protectedPages = new Set(["seats.html", "manage.html", "users.html"]);
 
 function isProtectedPage() {
   return protectedPages.has(currentPage);
@@ -52,6 +52,15 @@ function setOutput(message, data) {
     return;
   }
   output.textContent = data ? `${message}\n${JSON.stringify(data, null, 2)}` : message;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function setAuthStatus() {
@@ -172,9 +181,9 @@ function renderSeats() {
 function reservationRowHtml(reservation) {
   return `
     <tr>
-      <td>${reservation.seatNumber ?? ""}</td>
-      <td>${reservation.type ?? ""}</td>
-      <td>${reservation.reservedFor || "Not reserved"}</td>
+      <td>${escapeHtml(reservation.seatNumber)}</td>
+      <td>${escapeHtml(reservation.type)}</td>
+      <td>${escapeHtml(reservation.reservedFor || "Not reserved")}</td>
     </tr>
   `;
 }
@@ -200,6 +209,48 @@ function renderReservations(reservations) {
       </thead>
       <tbody>
         ${reservationList.map(reservationRowHtml).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function userRowHtml(user) {
+  return `
+    <tr>
+      <td>${escapeHtml(user.username)}</td>
+      <td>${escapeHtml(user.firstName)}</td>
+      <td>${escapeHtml(user.lastName)}</td>
+      <td>${escapeHtml(user.email)}</td>
+      <td>${escapeHtml(user.phone)}</td>
+      <td>${escapeHtml(user.dob)}</td>
+    </tr>
+  `;
+}
+
+function renderUsers(users) {
+  const container = getEl("usersContainer");
+  if (!container) {
+    return;
+  }
+  const userList = Array.isArray(users) ? users : [users];
+  if (userList.length === 0) {
+    container.innerHTML = '<p class="muted">No users found.</p>';
+    return;
+  }
+  container.innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>First name</th>
+          <th>Last name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Date of birth</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${userList.map(userRowHtml).join("")}
       </tbody>
     </table>
   `;
@@ -451,6 +502,55 @@ async function loadSeatReservation(event) {
   setOutput("Loaded seat reservation", reservation);
 }
 
+async function loadUsers() {
+  const users = await apiRequest("/users");
+  const userList = Array.isArray(users) ? users : [];
+  renderUsers(userList);
+  setOutput("Loaded users", userList);
+}
+
+async function loadUser(event) {
+  event.preventDefault();
+  const userId = getEl("userId").value;
+  const user = await apiRequest(`/users/${userId}`);
+  renderUsers(user);
+  fillUpdateUserForm(userId, user);
+  setOutput("Loaded user", user);
+}
+
+function fillUpdateUserForm(userId, user) {
+  const updateUserId = getEl("updateUserId");
+  if (!updateUserId) {
+    return;
+  }
+  updateUserId.value = userId;
+  getEl("updateFirstName").value = user.firstName || "";
+  getEl("updateLastName").value = user.lastName || "";
+  getEl("updatePhone").value = user.phone || "";
+}
+
+async function updateUser(event) {
+  event.preventDefault();
+  const userId = getEl("updateUserId").value;
+  const payload = {
+    firstName: getEl("updateFirstName").value.trim() || null,
+    lastName: getEl("updateLastName").value.trim() || null,
+    phone: getEl("updatePhone").value.trim() || null
+  };
+  const result = await apiRequest(`/users/${userId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+  setOutput("User updated", result);
+}
+
+async function deleteUser(event) {
+  event.preventDefault();
+  const userId = getEl("deleteUserId").value;
+  await apiRequest(`/users/${userId}`, { method: "DELETE" });
+  setOutput("User deleted");
+}
+
 async function runSafely(fn) {
   try {
     await fn();
@@ -551,6 +651,26 @@ function initManagePage() {
   }
 }
 
+function initUsersPage() {
+  const loadUsersButton = getEl("loadUsersButton");
+  const getUserForm = getEl("getUserForm");
+  const updateUserForm = getEl("updateUserForm");
+  const deleteUserForm = getEl("deleteUserForm");
+
+  if (loadUsersButton) {
+    loadUsersButton.addEventListener("click", () => runSafely(loadUsers));
+  }
+  if (getUserForm) {
+    getUserForm.addEventListener("submit", (event) => runSafely(() => loadUser(event)));
+  }
+  if (updateUserForm) {
+    updateUserForm.addEventListener("submit", (event) => runSafely(() => updateUser(event)));
+  }
+  if (deleteUserForm) {
+    deleteUserForm.addEventListener("submit", (event) => runSafely(() => deleteUser(event)));
+  }
+}
+
 function initSharedControls() {
   const logoutButton = getEl("logoutButton");
   if (logoutButton) {
@@ -601,6 +721,7 @@ function bootstrap() {
   initSelectionControls();
   initSeatsPage();
   initManagePage();
+  initUsersPage();
 
   if (getEl("eventSelect")) {
     runSafely(loadEvents);
