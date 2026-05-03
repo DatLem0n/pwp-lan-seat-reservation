@@ -108,6 +108,13 @@ form {
   gap: 0.35rem;
 }
 
+.inline-form {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
 label {
   font-size: 0.9rem;
   color: #c8d4e5;
@@ -215,6 +222,35 @@ button:hover {
 
 .seat-reserved {
   color: #ff908e;
+}
+
+.reservations {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #0f1a2c;
+  border: 1px solid #2e3c58;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #2e3c58;
+  text-align: left;
+}
+
+.data-table th {
+  color: #c8d4e5;
+  background: #18243a;
+}
+
+.data-table tr:last-child td {
+  border-bottom: 0;
 }
 
 #seatDialog {
