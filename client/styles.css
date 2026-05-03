@@ -146,6 +146,14 @@ button:hover {
   background: #245ce0;
 }
 
+button.danger {
+  background: #bf3636;
+}
+
+button.danger:hover {
+  background: #a92f2f;
+}
+
 .row {
   display: flex;
   gap: 0.5rem;
@@ -225,6 +233,10 @@ button:hover {
 }
 
 .reservations {
+  overflow-x: auto;
+}
+
+.users {
   overflow-x: auto;
 }
 

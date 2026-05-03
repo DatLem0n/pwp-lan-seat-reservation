@@ -101,8 +101,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(DeletionDto deletionDto, String username) {
-        User user = userRepository.findById(deletionDto.getId())
+    public void deleteUser(Long userId, String username) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
 
         validatePermission(user, username);
