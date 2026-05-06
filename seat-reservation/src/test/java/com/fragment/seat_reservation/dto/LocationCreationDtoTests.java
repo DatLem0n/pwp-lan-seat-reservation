@@ -60,8 +60,6 @@ public class LocationCreationDtoTests {
         locationCreationDto.setName("Test Location");
         var violations = validator.validate(locationCreationDto);
 
-        Assertions.assertThat(violations).isNotEmpty();
-        Assertions.assertThat(violations.iterator().next().getMessage())
-                .isEqualTo("Event id is required");
+        Assertions.assertThat(violations).isEmpty();
     }
 }

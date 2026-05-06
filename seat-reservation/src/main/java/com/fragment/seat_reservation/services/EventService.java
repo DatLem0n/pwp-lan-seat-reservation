@@ -37,10 +37,9 @@ public class EventService {
 
     @Transactional
     public void deleteEvent(Long id) {
-        if (!eventRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Event Not Found!");
-        }
-        eventRepository.deleteById(id);
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event Not Found!"));
+        eventRepository.delete(event);
     }
 
     public List<EventDto> findAll() {

@@ -39,13 +39,13 @@ public class LocationService {
 
     @Transactional
     public void deleteLocation(Long eventId, Long locationId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new ResourceNotFoundException("Event Not Found!"));
-        boolean removed = event.getLocations().removeIf(loc -> loc.getId().equals(locationId));
-        if (!removed) {
-            throw new ResourceNotFoundException("Location Not Found!");
+        if (!eventRepository.existsById(eventId)) {
+            throw new ResourceNotFoundException("Event Not Found!");
         }
-        eventRepository.save(event);
+
+        Location location = locationRepository.findByEventIdAndId(eventId, locationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Location Not Found!"));
+        locationRepository.delete(location);
     }
 
     public List<LocationResponseDto> findAllByEventId(Long id) {

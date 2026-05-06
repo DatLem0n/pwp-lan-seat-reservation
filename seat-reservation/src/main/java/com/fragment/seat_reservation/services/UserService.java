@@ -63,7 +63,7 @@ public class UserService {
         user.setPhone(userRegistrationDto.getPhone());
         user.setDob(userRegistrationDto.getDateOfBirth());
         user.setLastLogin(null);
-        user.setAdmin(true);
+        user.setAdmin(false);
         user.setCreationDate(LocalDate.now());
 
         userRepository.save(user);
