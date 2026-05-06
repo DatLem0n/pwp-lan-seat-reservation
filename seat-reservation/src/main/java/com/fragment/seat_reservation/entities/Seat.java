@@ -36,7 +36,9 @@ public class Seat {
     private Location location;
 
     @ManyToOne
-    @JoinColumn(name = "reserved_for_user_id")
+    @JoinColumn(name = "reserved_for_user_id", foreignKey = @ForeignKey(
+            foreignKeyDefinition = "FOREIGN KEY (reserved_for_user_id) REFERENCES users(id) ON DELETE SET NULL"
+    ))
     private User reservedFor;
 
     public Boolean isReserved(){

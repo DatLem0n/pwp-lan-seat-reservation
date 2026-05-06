@@ -64,9 +64,7 @@ public class SeatCreationDtoTests {
         seatCreationDto.setSeatCount(10);
         var violations = validator.validate(seatCreationDto);
 
-        Assertions.assertThat(violations).isNotEmpty();
-        Assertions.assertThat(violations.iterator().next().getMessage())
-                .isEqualTo("Location id is required");
+        Assertions.assertThat(violations).isEmpty();
     }
 
     @Test

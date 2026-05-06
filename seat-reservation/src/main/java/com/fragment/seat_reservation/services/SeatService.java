@@ -58,9 +58,8 @@ public class SeatService {
     @Transactional
     public void deleteSeat(DeletionDto deletionDto) {
         Long id = deletionDto.getId();
-        if (!seatRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Seat Not Found!");
-        }
-        seatRepository.deleteById(id);
+        Seat seat = seatRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Seat Not Found!"));
+        seatRepository.delete(seat);
     }
 }

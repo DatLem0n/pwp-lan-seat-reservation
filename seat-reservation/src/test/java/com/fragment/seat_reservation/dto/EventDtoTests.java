@@ -1,5 +1,7 @@
 package com.fragment.seat_reservation.dto;
 
+import com.fragment.seat_reservation.entities.Event;
+import com.fragment.seat_reservation.mapper.EventMapper;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
+import java.util.List;
 
 public class EventDtoTests {
     private static ValidatorFactory factory;
@@ -81,7 +84,4 @@ public class EventDtoTests {
         Assertions.assertThat(violations.iterator().next().getMessage())
                 .isEqualTo("Description must not exceed 256 characters");
     }
-
-
-
 }
