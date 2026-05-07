@@ -30,15 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ControllerTestsBase {
 
     @Autowired
-    protected UserService userService;
-
-    @Autowired
-    protected UserRepository userRepository;
-
-    @Autowired
-    protected JwtService jwtService;
-
-    @Autowired
     protected MockMvc mockMvc;
 
     @Autowired
@@ -46,37 +37,59 @@ public class ControllerTestsBase {
 
     protected String bearerToken;
 
-    private String testUsername;
+    protected String defaultTestFirstname = "Tero";
 
+    protected String defaultTestLastname = "Testeri";
+
+    protected String defaultPassword = "1234";
+
+    protected String defaultTestPhone = "123-456789";
+
+    protected LocalDate defaultTestDob = LocalDate.parse("1993-06-11");
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
+    private String testUsername;
 
     protected void createTestUser(String username, String email, boolean isAdmin) {
         UserRegistrationDto dto = new UserRegistrationDto();
         this.testUsername = username;
         dto.setUsername(username);
-        dto.setPassword("1234");
-        dto.setFirstName("Tero");
-        dto.setLastName("Testeri");
-        dto.setPhone("123-456789");
+        dto.setPassword(defaultPassword);
+        dto.setFirstName(defaultTestFirstname);
+        dto.setLastName(defaultTestLastname);
+        dto.setPhone(defaultTestPhone);
         dto.setEmail(email);
-        dto.setDob(LocalDate.parse("1990-05-15"));
+        dto.setDob(defaultTestDob);
 
         userService.saveUser(dto);
 
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
         if (isAdmin) {
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
             user.setAdmin(true);
             userRepository.save(user);
         }
-        this.bearerToken = "Bearer " + getAccessToken(username);
+        this.bearerToken = "Bearer " + getAccessToken(user.getUsername(), user.getId());
     }
 
     protected void deleteTestUser() {
         userService.deleteUserByUsername(testUsername);
     }
 
-    protected String getAccessToken(String username) {
-        return jwtService.generateToken(username);
+    protected String getAccessToken(String username, Long userId) {
+        return jwtService.generateToken(username, userId);
+    }
+
+    protected Long getUserId() {
+        return jwtService.extractUserId(bearerToken.substring(7));
     }
 
     protected String createEvent(String name, String description, String date) throws Exception {
@@ -124,5 +137,4 @@ public class ControllerTestsBase {
                         .content(objectMapper.writeValueAsString(seatCreationDto)))
                 .andExpect(status().isCreated());
     }
-
 }

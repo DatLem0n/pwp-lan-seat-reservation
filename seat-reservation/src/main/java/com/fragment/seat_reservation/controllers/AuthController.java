@@ -1,13 +1,11 @@
 package com.fragment.seat_reservation.controllers;
 
-import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.AuthResponseDto;
 import com.fragment.seat_reservation.dto.LoginRequestDto;
 import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.fragment.seat_reservation.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

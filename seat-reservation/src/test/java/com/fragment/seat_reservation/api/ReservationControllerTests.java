@@ -49,10 +49,10 @@ public class ReservationControllerTests extends ControllerTestsBase {
                 .andExpect(jsonPath("$.length()").value(seatNumber))
                 .andReturn();
 
-        String tmp = getResult.getResponse().getContentAsString();
-        boolean isReserved = JsonPath.read(tmp, "$[0].reserved");
+        String content = getResult.getResponse().getContentAsString();
+        boolean isReserved = JsonPath.read(content, "$[0].reserved");
         Assertions.assertThat(isReserved).isEqualTo(false);
-        Integer firstId = JsonPath.read(tmp, "$[0].id");
+        Integer firstId = JsonPath.read(content, "$[0].id");
 
         String seatUrl = locationUrl + "/seats/" + firstId.toString() + "/reservation";
         mockMvc.perform(post(seatUrl)
@@ -64,8 +64,8 @@ public class ReservationControllerTests extends ControllerTestsBase {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        tmp = getResult.getResponse().getContentAsString();
-        isReserved = JsonPath.read(tmp, "$[0].reserved");
+        content = getResult.getResponse().getContentAsString();
+        isReserved = JsonPath.read(content, "$[0].reserved");
         Assertions.assertThat(isReserved).isEqualTo(true);
 
         mockMvc.perform(delete(seatUrl)
@@ -77,8 +77,8 @@ public class ReservationControllerTests extends ControllerTestsBase {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        tmp = getResult.getResponse().getContentAsString();
-        isReserved = JsonPath.read(tmp, "$[0].reserved");
+        content = getResult.getResponse().getContentAsString();
+        isReserved = JsonPath.read(content, "$[0].reserved");
         Assertions.assertThat(isReserved).isEqualTo(false);
     }
 
@@ -101,8 +101,8 @@ public class ReservationControllerTests extends ControllerTestsBase {
                 .andExpect(jsonPath("$.length()").value(seatNumber))
                 .andReturn();
 
-        String tmp = getResult.getResponse().getContentAsString();
-        Integer firstId = JsonPath.read(tmp, "$[0].id");
+        String content = getResult.getResponse().getContentAsString();
+        Integer firstId = JsonPath.read(content, "$[0].id");
         String seatUrl = locationUrl + "/seats/" + firstId.toString() + "/reservation";
 
         mockMvc.perform(post(seatUrl)
@@ -133,8 +133,8 @@ public class ReservationControllerTests extends ControllerTestsBase {
                 .andExpect(jsonPath("$.length()").value(seatNumber))
                 .andReturn();
 
-        String tmp = getResult.getResponse().getContentAsString();
-        Integer firstId = JsonPath.read(tmp, "$[0].id");
+        String content = getResult.getResponse().getContentAsString();
+        Integer firstId = JsonPath.read(content, "$[0].id");
         String seatUrl = locationUrl + "/seats/" + firstId.toString() + "/reservation";
 
         mockMvc.perform(delete(seatUrl)

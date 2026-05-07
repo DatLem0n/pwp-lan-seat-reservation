@@ -1,13 +1,16 @@
 package com.fragment.seat_reservation.api;
 
+import com.fragment.seat_reservation.dto.DeletionDto;
 import com.fragment.seat_reservation.dto.LoginRequestDto;
 import com.fragment.seat_reservation.dto.UserRegistrationDto;
+import com.jayway.jsonpath.JsonPath;
 import jakarta.transaction.Transactional;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 
@@ -48,8 +51,7 @@ public class AuthControllerTests extends ControllerTestsBase {
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registrationDto)))
-                .andExpect(status().isCreated())
-                .andReturn();
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -86,7 +88,7 @@ public class AuthControllerTests extends ControllerTestsBase {
                 .andExpect(status().isCreated());
 
         username = "test-user-2";
-        getUserRegistrationDto(username, email, password);
+        registrationDto = getUserRegistrationDto(username, email, password);
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -136,5 +138,52 @@ public class AuthControllerTests extends ControllerTestsBase {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void deleteUserTest() throws Exception {
+        String username = "test-user-1";
+        String email = "tester@testmail.com";
+        String password = "1234";
+        UserRegistrationDto registrationDto = getUserRegistrationDto(username, email, password);
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registrationDto)))
+                .andExpect(status().isCreated());
+
+        LoginRequestDto loginDto = new LoginRequestDto();
+        loginDto.setUsername(username);
+        loginDto.setPassword(password);
+
+        MvcResult postResult = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginDto)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = postResult.getResponse().getContentAsString();
+        String token = JsonPath.read(content, "$.token");
+        this.bearerToken = "Bearer " + token;
+        Long userId = getUserId();
+
+        DeletionDto deletionDto = new DeletionDto();
+        deletionDto.setId(userId);
+
+        mockMvc.perform(delete("/users/" + userId)
+                        .header("Authorization", bearerToken))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/users/" + userId)
+                        .header("Authorization", bearerToken))
+                .andExpect(status().isUnauthorized());
+
+        username = "test-user-2";
+        email = "tester2@testmail.com";
+        createTestUser(username, email, false);
+
+        mockMvc.perform(get("/users/" + userId)
+                        .header("Authorization", bearerToken))
+                .andExpect(status().isNotFound());
     }
 }
