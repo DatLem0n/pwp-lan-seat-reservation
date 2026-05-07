@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/{userId}")
-    public ResponseEntity<?> delete(@PathVariable Long userId, Authentication authentication) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId, Authentication authentication) {
         String username = authentication.getName();
         userService.deleteUser(userId, username);
         return ResponseEntity.noContent().build();

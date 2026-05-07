@@ -127,15 +127,17 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
-        return new AuthResponseDto(jwtService.generateToken(loginRequestDto.getUsername()));
+        return new AuthResponseDto(jwtService.generateToken(user.getUsername(), user.getId()));
     }
 
     public void validatePermission(User user, String authenticatedUsername) {
         /*
         user is the resource owner and authenticatedUsername is user (username) wanting to access this resource.
          */
+        User requestUser = userRepository.findByUsername(authenticatedUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
         boolean isOwner = user.getUsername().equals(authenticatedUsername);
-        boolean isAdmin = user.isAdmin();
+        boolean isAdmin = requestUser.isAdmin();
 
         if (!isOwner && !isAdmin) {
             throw new NotResourceOwnerException("Access Denied");
