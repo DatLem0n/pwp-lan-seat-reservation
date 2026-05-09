@@ -61,7 +61,7 @@ public class UserService {
         user.setEmail(userRegistrationDto.getEmail());
         user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
         user.setPhone(userRegistrationDto.getPhone());
-        user.setDob(userRegistrationDto.getDateOfBirth());
+        user.setDob(userRegistrationDto.getDob());
         user.setLastLogin(null);
         user.setAdmin(false);
         user.setCreationDate(LocalDate.now());
@@ -142,6 +142,13 @@ public class UserService {
         if (!isOwner && !isAdmin) {
             throw new NotResourceOwnerException("Access Denied");
         }
+    }
+
+    @Transactional
+    public void deleteUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+        userRepository.delete(user);
     }
 }
 // business logic for users / auth

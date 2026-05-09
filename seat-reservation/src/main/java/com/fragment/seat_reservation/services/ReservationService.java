@@ -60,7 +60,6 @@ public class ReservationService {
         seatRepository.save(seat);
     }
 
-    @Transactional
     public ReservationDto getReservation(Long seatId) {
         //Seat seat = seatRepository.findById(seatId)
                 //.orElseThrow(() -> new ResourceNotFoundException("Seat not found"));
@@ -76,7 +75,6 @@ public class ReservationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Seat not found")));
     }
 
-    @Transactional
     public List<ReservationDto> getAllReservations(Long locationId) {
         return reservationMapper.toDtoList(seatRepository.findAllByLocationId(locationId));
     }
