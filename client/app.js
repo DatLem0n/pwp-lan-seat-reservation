@@ -214,7 +214,36 @@ function renderReservations(reservations) {
   `;
 }
 
+function formatLastLogin(value) {
+  if (!value) {
+    return "";
+  }
+
+  const parsedDate = new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return String(value).replace("T", " ").replace(/\.\d+$/, "");
+  }
+
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const dateFormatter = new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone
+  });
+  const timeFormatter = new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZone,
+    timeZoneName: "short"
+  });
+
+  return `${dateFormatter.format(parsedDate)} ${timeFormatter.format(parsedDate)}`;
+}
+
 function userRowHtml(user) {
+  const lastLogin = formatLastLogin(user.lastLogin);
   return `
     <tr>
       <td>${escapeHtml(user.id)}</td>
@@ -224,7 +253,7 @@ function userRowHtml(user) {
       <td>${escapeHtml(user.email)}</td>
       <td>${escapeHtml(user.phone)}</td>
       <td>${escapeHtml(user.dob)}</td>
-      <td>${escapeHtml(user.lastLogin)}</td>
+      <td>${escapeHtml(lastLogin)}</td>
     </tr>
   `;
 }
