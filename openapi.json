@@ -1,0 +1,705 @@
+{
+  "openapi": "3.2.0",
+  "info": {
+    "title": "LAN Seat Reservation API",
+    "version": "1.0.0",
+    "description": "REST API for events, locations, seats, reservations, and users."
+  },
+  "servers": [
+    {
+      "url": "https://pwp.kuusinet.fi/api",
+      "description": "API base URL"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserRegistrationDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registered successfully",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "example": "Registered successfully" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequestText" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Authenticate and get JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequestDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JWT token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponseDto" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "tags": ["Events"],
+        "summary": "List all events",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EventDto" }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" }
+        }
+      },
+      "post": {
+        "tags": ["Events"],
+        "summary": "Create event",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EventDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "Location": {
+                "schema": { "type": "string" },
+                "description": "URL of created event"
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequestText" },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" }
+        }
+      }
+    },
+    "/events/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        }
+      ],
+      "get": {
+        "tags": ["Events"],
+        "summary": "Get event by id",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Event details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EventDto" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      },
+      "delete": {
+        "tags": ["Events"],
+        "summary": "Delete event by id",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      }
+    },
+    "/events/{eventId}/locations": {
+      "parameters": [
+        {
+          "name": "eventId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        }
+      ],
+      "get": {
+        "tags": ["Locations"],
+        "summary": "List locations for event",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of locations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LocationResponseDto" }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" }
+        }
+      },
+      "post": {
+        "tags": ["Locations"],
+        "summary": "Create location for event",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LocationCreationDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "Location": {
+                "schema": { "type": "string" },
+                "description": "URL of created location"
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequestText" },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" }
+        }
+      }
+    },
+    "/events/{eventId}/locations/{locationId}": {
+      "parameters": [
+        {
+          "name": "eventId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        },
+        {
+          "name": "locationId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        }
+      ],
+      "get": {
+        "tags": ["Locations"],
+        "summary": "Get location details",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Location details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LocationResponseDto" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      },
+      "delete": {
+        "tags": ["Locations"],
+        "summary": "Delete location",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      }
+    },
+    "/events/{eventId}/locations/{locationId}/seats": {
+      "parameters": [
+        {
+          "name": "eventId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        },
+        {
+          "name": "locationId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        }
+      ],
+      "get": {
+        "tags": ["Seats"],
+        "summary": "List seats for location",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of seats",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SeatResponseDto" }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" }
+        }
+      },
+      "post": {
+        "tags": ["Seats"],
+        "summary": "Create seats in location",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SeatCreationDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "example": "Created 10 seats" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequestText" },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" }
+        }
+      },
+      "delete": {
+        "tags": ["Seats"],
+        "summary": "Delete one seat by id",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" },
+            "description": "Seat id to delete"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      }
+    },
+    "/events/{eventId}/locations/{locationId}/seats/reservations": {
+      "parameters": [
+        {
+          "name": "eventId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        },
+        {
+          "name": "locationId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        }
+      ],
+      "get": {
+        "tags": ["Reservations"],
+        "summary": "List reservations for a location",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of seat reservation details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReservationDto" }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      }
+    },
+    "/events/{eventId}/locations/{locationId}/seats/{seatId}/reservation": {
+      "parameters": [
+        {
+          "name": "eventId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        },
+        {
+          "name": "locationId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        },
+        {
+          "name": "seatId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        }
+      ],
+      "post": {
+        "tags": ["Reservations"],
+        "summary": "Reserve seat for authenticated user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Reserved",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "example": "Seat successfully reserved" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "400": { "$ref": "#/components/responses/BadRequestText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" },
+          "409": { "$ref": "#/components/responses/ConflictText" }
+        }
+      },
+      "delete": {
+        "tags": ["Reservations"],
+        "summary": "Cancel authenticated user's reservation",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "204": { "description": "Reservation removed" },
+          "400": { "$ref": "#/components/responses/BadRequestText" },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "403": { "$ref": "#/components/responses/ForbiddenText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      },
+      "get": {
+        "tags": ["Reservations"],
+        "summary": "Get reservation details for one seat",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Reservation details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReservationDto" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "List user profiles",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserProfileDto" }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "403": { "$ref": "#/components/responses/ForbiddenText" }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "format": "int64" }
+        }
+      ],
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "User profile",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfileDto" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "403": { "$ref": "#/components/responses/ForbiddenText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user profile",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserProfileDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Updated",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "example": "Changes were successful" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "403": { "$ref": "#/components/responses/ForbiddenText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete user profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/UnauthorizedText" },
+          "403": { "$ref": "#/components/responses/ForbiddenText" },
+          "404": { "$ref": "#/components/responses/NotFoundText" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "IdPath": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer", "format": "int64" }
+      },
+      "EventIdPath": {
+        "name": "eventId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer", "format": "int64" }
+      },
+      "LocationIdPath": {
+        "name": "locationId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer", "format": "int64" }
+      },
+      "SeatIdPath": {
+        "name": "seatId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer", "format": "int64" }
+      },
+      "UserIdPath": {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer", "format": "int64" }
+      }
+    },
+    "responses": {
+      "BadRequestText": {
+        "description": "Bad request",
+        "content": {
+          "text/plain": {
+            "schema": { "type": "string" }
+          }
+        }
+      },
+      "UnauthorizedText": {
+        "description": "Unauthorized",
+        "content": {
+          "text/plain": {
+            "schema": { "type": "string" }
+          }
+        }
+      },
+      "ForbiddenText": {
+        "description": "Forbidden",
+        "content": {
+          "text/plain": {
+            "schema": { "type": "string" }
+          }
+        }
+      },
+      "NotFoundText": {
+        "description": "Not found",
+        "content": {
+          "text/plain": {
+            "schema": { "type": "string" }
+          }
+        }
+      },
+      "ConflictText": {
+        "description": "Conflict",
+        "content": {
+          "text/plain": {
+            "schema": { "type": "string", "example": "Please refresh and try again." }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "AuthResponseDto": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string" }
+        },
+        "required": ["token"]
+      },
+      "LoginRequestDto": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string", "minLength": 1 },
+          "password": { "type": "string", "minLength": 1 }
+        },
+        "required": ["username", "password"]
+      },
+      "EventDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "name": { "type": "string", "maxLength": 64, "minLength": 1 },
+          "description": { "type": "string", "maxLength": 256 },
+          "date": { "type": "string", "format": "date" }
+        },
+        "required": ["name", "date"]
+      },
+      "LocationCreationDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "maxLength": 64, "minLength": 1 },
+          "event": { "type": "integer", "format": "int64" }
+        },
+        "required": ["name"]
+      },
+      "LocationResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      },
+      "SeatCreationDto": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "maxLength": 20, "minLength": 1 },
+          "seatCount": { "type": "integer", "minimum": 1 },
+          "location": { "type": "integer", "format": "int64" }
+        },
+        "required": ["type", "seatCount"]
+      },
+      "SeatResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "seatNumber": { "type": "integer" },
+          "type": { "type": "string" },
+          "reserved": { "type": "boolean" }
+        },
+        "required": ["id", "seatNumber", "type", "reserved"]
+      },
+      "DeletionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" }
+        },
+        "required": ["id"]
+      },
+      "ReservationDto": {
+        "type": "object",
+        "properties": {
+          "seatNumber": { "type": "integer", "format": "int64" },
+          "type": { "type": "string" },
+          "reservedFor": { "type": "string" }
+        }
+      },
+      "UserRegistrationDto": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string", "minLength": 1 },
+          "firstName": { "type": "string", "minLength": 1 },
+          "lastName": { "type": "string", "minLength": 1 },
+          "email": { "type": "string", "format": "email", "minLength": 1 },
+          "password": { "type": "string", "minLength": 1 },
+          "phone": { "type": "string", "minLength": 1 },
+          "dob": { "type": "string", "format": "date" }
+        },
+        "required": ["username", "firstName", "lastName", "email", "password", "phone"]
+      },
+      "UserProfileDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "username": { "type": "string" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string" },
+          "dob": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  }
+}
