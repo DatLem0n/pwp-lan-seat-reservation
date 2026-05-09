@@ -114,8 +114,12 @@ async function apiRequest(path, options = {}) {
         setTimeout(redirectToLogin, 500);
       }
     }
-    const error = new Error(typeof body === "string" ? body : JSON.stringify(body));
-    error.isAccessDenied = typeof body === "object" && body?.error === "Access Denied";
+    const errorMessage = typeof body === "string" ? body : JSON.stringify(body);
+    const error = new Error(errorMessage);
+    error.isAccessDenied = response.status === 403 && (
+      errorMessage === "Access Denied" ||
+      (typeof body === "object" && body?.error === "Access Denied")
+    );
     throw error;
   }
   return body;
