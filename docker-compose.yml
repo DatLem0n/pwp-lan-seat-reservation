@@ -52,6 +52,15 @@ services:
       app:
        condition: service_healthy
     restart: unless-stopped
+
+  swagger:
+    image: docker.swagger.io/swaggerapi/swagger-ui
+    expose:
+      - "8080"
+    environment:
+      SWAGGER_JSON: /foo/swagger.json
+    volumes:
+      - ./openapi.json:/foo/swagger.json
         
   certbot:
     image: certbot/certbot:latest
