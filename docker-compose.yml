@@ -28,6 +28,12 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     depends_on:
       mariadb:
         condition: service_healthy
@@ -44,7 +50,7 @@ services:
       - certbot_www:/var/www/certbot:ro
     depends_on:
       app:
-       condition: service_started
+       condition: service_healthy
     restart: unless-stopped
         
   certbot:
@@ -62,7 +68,7 @@ services:
       - .env
     depends_on:
       app:
-        condition: service_started
+        condition: service_healthy
 
 volumes:
   mariadb_data:
