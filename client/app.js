@@ -224,6 +224,7 @@ function userRowHtml(user) {
       <td>${escapeHtml(user.email)}</td>
       <td>${escapeHtml(user.phone)}</td>
       <td>${escapeHtml(user.dob)}</td>
+      <td>${escapeHtml(user.lastLogin)}</td>
     </tr>
   `;
 }
@@ -249,6 +250,7 @@ function renderUsers(users) {
           <th>Email</th>
           <th>Phone</th>
           <th>Date of birth</th>
+          <th>Last login</th>
         </tr>
       </thead>
       <tbody>
