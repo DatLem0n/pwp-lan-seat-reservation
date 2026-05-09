@@ -387,7 +387,7 @@ async function onRegister(event) {
     email: getEl("regEmail").value.trim(),
     password: getEl("regPassword").value,
     phone: getEl("regPhone").value.trim(),
-    dateOfBirth: getEl("regDob").value || null
+    dob: getEl("regDob").value || null
   };
   const result = await apiRequest("/auth/register", {
     method: "POST",
