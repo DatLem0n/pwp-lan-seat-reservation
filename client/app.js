@@ -114,7 +114,9 @@ async function apiRequest(path, options = {}) {
         setTimeout(redirectToLogin, 500);
       }
     }
-    throw new Error(typeof body === "string" ? body : JSON.stringify(body));
+    const error = new Error(typeof body === "string" ? body : JSON.stringify(body));
+    error.isAccessDenied = typeof body === "object" && body?.error === "Access Denied";
+    throw error;
   }
   return body;
 }
@@ -590,6 +592,9 @@ async function runSafely(fn) {
   try {
     await fn();
   } catch (error) {
+    if (error.isAccessDenied) {
+      window.alert("Access denied. You do not have access to this resource.");
+    }
     setOutput("Request failed", { error: error.message });
   }
 }
