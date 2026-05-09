@@ -61,6 +61,9 @@ services:
       SWAGGER_JSON: /foo/swagger.json
     volumes:
       - ./openapi.json:/foo/swagger.json
+    depends_on:
+      nginx:
+        condition: service_started
         
   certbot:
     image: certbot/certbot:latest
