@@ -5,6 +5,7 @@ import com.fragment.seat_reservation.entities.Event;
 import com.fragment.seat_reservation.services.EventService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,8 +23,9 @@ public class EventController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createEvent(@Valid @RequestBody EventDto eventDto) {
-        Event savedEvent = eventService.saveEvent(eventDto);
+    public ResponseEntity<?> createEvent(@Valid @RequestBody EventDto eventDto, Authentication authentication) {
+        String username = authentication.getName();
+        Event savedEvent = eventService.saveEvent(eventDto, username);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -34,8 +36,9 @@ public class EventController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
-        eventService.deleteEvent(id);
+    public ResponseEntity<?> deleteEvent(@PathVariable Long id, Authentication authentication) {
+        String username = authentication.getName();
+        eventService.deleteEvent(id, username);
         return ResponseEntity.noContent().build();
     }
 

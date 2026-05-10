@@ -1,6 +1,7 @@
 package com.fragment.seat_reservation.api;
 
 import com.fragment.seat_reservation.dto.DeletionDto;
+import com.fragment.seat_reservation.dto.EventDto;
 import com.fragment.seat_reservation.dto.LoginRequestDto;
 import com.fragment.seat_reservation.dto.UserRegistrationDto;
 import com.jayway.jsonpath.JsonPath;
@@ -185,5 +186,26 @@ public class AuthControllerTests extends ControllerTestsBase {
         mockMvc.perform(get("/users/" + userId)
                         .header("Authorization", bearerToken))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void createEventWithoutPermissionTest() throws Exception {
+        String username = "test-user-1";
+        String email = "tester@testmail.com";
+        createTestUser(username, email, false);
+
+        String eventName = "Test event 1";
+        String eventDesc = "This is a test event";
+        String eventDate = "2030-12-12";
+        EventDto eventDto = new EventDto();
+        eventDto.setName(eventName);
+        eventDto.setDescription(eventDesc);
+        eventDto.setDate(LocalDate.parse(eventDate));
+
+        mockMvc.perform(post("/events")
+                        .header("Authorization", bearerToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDto)))
+                .andExpect(status().isForbidden());
     }
 }

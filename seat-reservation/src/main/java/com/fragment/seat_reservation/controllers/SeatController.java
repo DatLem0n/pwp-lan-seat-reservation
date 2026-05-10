@@ -9,6 +9,7 @@ import com.fragment.seat_reservation.services.SeatService;
 import jakarta.validation.Valid;
 import org.hibernate.validator.constraints.ParameterScriptAssert;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,16 +33,19 @@ public class SeatController {
 
     @PostMapping()
     public ResponseEntity<?> createSeats(@Valid @RequestBody SeatCreationDto request,
-                                  @PathVariable Long locationId) {
+                                         @PathVariable Long locationId, Authentication authentication) {
+        String username = authentication.getName();
         request.setLocation(locationId);
-        seatService.createSeats(request);
+        seatService.createSeats(request, username);
         Integer seatCount = request.getSeatCount();
         return ResponseEntity.status(201).body("Created " + seatCount.toString() + " seats");
     }
 
     @DeleteMapping()
-    public ResponseEntity<?> deleteSeat(@Valid @RequestBody DeletionDto request, @PathVariable Long locationId) {
-        seatService.deleteSeat(request);
+    public ResponseEntity<?> deleteSeat(@Valid @RequestBody DeletionDto request,
+                                        @PathVariable Long locationId, Authentication authentication) {
+        String username = authentication.getName();
+        seatService.deleteSeat(request, username);
         return ResponseEntity.noContent().build();
     }
 
