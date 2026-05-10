@@ -50,7 +50,7 @@ docker compose up -d
 - API base URL: "yourdomain.com/api".
 - Api documentation: "yourdomain.com/apidocs/"
 
-### Running tests
+## Running tests
 Tests utilize Spring Mock HTTP requests, so only the database service is required to be active.
 Easiest way to do this is with:
 ```
@@ -61,14 +61,14 @@ or alternatively you could start the full application stack with:
 docker compose up -d
 ```
 
-After database is running, navigate inside `seat-reservation` and ensure the maven has execution permission:
+After the database is running, navigate inside `seat-reservation` and ensure that maven has execution permission:
 ```
 cd seat-reservation
 ```
 ```
 chmod +x mvnw
 ```
-Now to start tests run ensure that you have *JDK 25* installed and configured and then run:
+Now to start tests run, ensure that you have *JDK 25* installed and configured and then run:
 ```
 ./mvnw test
 ```
