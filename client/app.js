@@ -114,7 +114,13 @@ async function apiRequest(path, options = {}) {
         setTimeout(redirectToLogin, 500);
       }
     }
-    throw new Error(typeof body === "string" ? body : JSON.stringify(body));
+    const errorMessage = typeof body === "string" ? body : JSON.stringify(body);
+    const error = new Error(errorMessage);
+    error.isAccessDenied = response.status === 403 && (
+      errorMessage === "Access Denied" ||
+      (typeof body === "object" && body?.error === "Access Denied")
+    );
+    throw error;
   }
   return body;
 }
@@ -214,7 +220,38 @@ function renderReservations(reservations) {
   `;
 }
 
+function formatLastLogin(value) {
+  if (!value) {
+    return "";
+  }
+
+  const normalizedValue = /(?:Z|[+-]\d{2}:?\d{2})$/.test(value) ? value : `${value}Z`;
+  const parsedDate = new Date(normalizedValue);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return String(value).replace("T", " ").replace(/\.\d+$/, "");
+  }
+
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const dateFormatter = new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone
+  });
+  const timeFormatter = new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    timeZone,
+    timeZoneName: "short"
+  });
+
+  return `${dateFormatter.format(parsedDate)} ${timeFormatter.format(parsedDate)}`;
+}
+
 function userRowHtml(user) {
+  const lastLogin = formatLastLogin(user.lastLogin);
   return `
     <tr>
       <td>${escapeHtml(user.id)}</td>
@@ -224,6 +261,7 @@ function userRowHtml(user) {
       <td>${escapeHtml(user.email)}</td>
       <td>${escapeHtml(user.phone)}</td>
       <td>${escapeHtml(user.dob)}</td>
+      <td>${escapeHtml(lastLogin)}</td>
     </tr>
   `;
 }
@@ -249,6 +287,7 @@ function renderUsers(users) {
           <th>Email</th>
           <th>Phone</th>
           <th>Date of birth</th>
+          <th>Last login</th>
         </tr>
       </thead>
       <tbody>
@@ -557,6 +596,9 @@ async function runSafely(fn) {
   try {
     await fn();
   } catch (error) {
+    if (error.isAccessDenied) {
+      window.alert("Access denied. You do not have access to this resource.");
+    }
     setOutput("Request failed", { error: error.message });
   }
 }
