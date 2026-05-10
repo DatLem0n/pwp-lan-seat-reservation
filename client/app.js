@@ -63,6 +63,24 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function currentUserIdFromToken() {
+  if (!state.token) {
+    return null;
+  }
+  const [, payload] = state.token.split(".");
+  if (!payload) {
+    return null;
+  }
+
+  try {
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = JSON.parse(window.atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")));
+    return decoded.userId || null;
+  } catch (error) {
+    return null;
+  }
+}
+
 function setAuthStatus() {
   const authStatus = getEl("authStatus");
   if (authStatus) {
@@ -559,6 +577,18 @@ async function loadUser(event) {
   setOutput("Loaded user", user);
 }
 
+async function loadCurrentUser() {
+  const userId = currentUserIdFromToken();
+  if (!userId) {
+    setOutput("Could not read current user ID from token.");
+    return;
+  }
+  const user = await apiRequest(`/users/${userId}`);
+  renderUsers(user);
+  fillUpdateUserForm(userId, user);
+  setOutput("Loaded current user", user);
+}
+
 function fillUpdateUserForm(userId, user) {
   const updateUserId = getEl("updateUserId");
   if (!updateUserId) {
@@ -697,12 +727,16 @@ function initManagePage() {
 
 function initUsersPage() {
   const loadUsersButton = getEl("loadUsersButton");
+  const loadCurrentUserButton = getEl("loadCurrentUserButton");
   const getUserForm = getEl("getUserForm");
   const updateUserForm = getEl("updateUserForm");
   const deleteUserForm = getEl("deleteUserForm");
 
   if (loadUsersButton) {
     loadUsersButton.addEventListener("click", () => runSafely(loadUsers));
+  }
+  if (loadCurrentUserButton) {
+    loadCurrentUserButton.addEventListener("click", () => runSafely(loadCurrentUser));
   }
   if (getUserForm) {
     getUserForm.addEventListener("submit", (event) => runSafely(() => loadUser(event)));
