@@ -6,6 +6,7 @@ import com.fragment.seat_reservation.entities.Location;
 import com.fragment.seat_reservation.services.LocationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -23,9 +24,11 @@ public class LocationController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> location(@PathVariable Long eventId, @Valid @RequestBody LocationCreationDto request) {
+    public ResponseEntity<?> location(@PathVariable Long eventId, @Valid @RequestBody LocationCreationDto request,
+                                      Authentication authentication) {
+        String username = authentication.getName();
         request.setEvent(eventId);
-        Location savedLocation = locationService.saveLocation(request);
+        Location savedLocation = locationService.saveLocation(request, username);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -36,8 +39,10 @@ public class LocationController {
     }
 
     @DeleteMapping(path = "/{locationId}")
-    public ResponseEntity<?> deleteLocation(@PathVariable Long eventId, @PathVariable Long locationId) {
-        locationService.deleteLocation(eventId, locationId);
+    public ResponseEntity<?> deleteLocation(@PathVariable Long eventId, @PathVariable Long locationId,
+                                            Authentication authentication) {
+        String username = authentication.getName();
+        locationService.deleteLocation(eventId, locationId, username);
         return ResponseEntity.noContent().build();
     }
 

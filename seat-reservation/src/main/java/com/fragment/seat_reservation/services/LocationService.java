@@ -18,14 +18,19 @@ public class LocationService {
     private final LocationRepository locationRepository;
     private final EventRepository eventRepository;
     private final LocationMapper locationMapper;
+    private final UserService userService;
 
-    public LocationService(LocationRepository locationRepository, EventRepository eventRepository, LocationMapper locationMapper) {
+
+    public LocationService(LocationRepository locationRepository, EventRepository eventRepository,
+                           LocationMapper locationMapper, UserService userService) {
         this.locationRepository = locationRepository;
         this.eventRepository = eventRepository;
         this.locationMapper = locationMapper;
+        this.userService = userService;
     }
 
-    public Location saveLocation(LocationCreationDto locationCreationDto) {
+    public Location saveLocation(LocationCreationDto locationCreationDto, String username) {
+        userService.validateOrganizerPermission(username);
         Location location = new Location();
         location.setName(locationCreationDto.getName());
         Long eventId = locationCreationDto.getEvent();
@@ -38,7 +43,8 @@ public class LocationService {
     }
 
     @Transactional
-    public void deleteLocation(Long eventId, Long locationId) {
+    public void deleteLocation(Long eventId, Long locationId, String username) {
+        userService.validateOrganizerPermission(username);
         if (!eventRepository.existsById(eventId)) {
             throw new ResourceNotFoundException("Event Not Found!");
         }

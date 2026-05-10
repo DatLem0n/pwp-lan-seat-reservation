@@ -61,3 +61,30 @@ docker compose up -d
 ### Accessing the application
 - WebUI: "yourdomain.com"  
 - API base URL: "yourdomain.com/api".
+
+### Running tests
+Tests utilize Spring Mock HTTP requests, so only the database service is required to be active.
+Easiest way to do this is with:
+```
+docker compose up -d mariadb
+```
+or alternatively you could start the full application stack with:
+```
+docker compose up -d
+```
+
+After database is running, navigate inside `seat-reservation` and ensure the maven has execution permission:
+```
+cd seat-reservation
+```
+```
+chmod +x mvnw
+```
+Now to start tests run ensure that you have *JDK 25* installed and configured and then run:
+```
+./mvnw test
+```
+**Review results**
+*   **Console:** Summary of passes and failures will appear directly in your terminal.
+*   **Reports:** Detailed reports and code coverage metrics are generated at:
+`seat-reservation/target/site/jacoco/index.html` (or `target/site/index.html`).

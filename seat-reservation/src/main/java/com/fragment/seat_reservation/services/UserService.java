@@ -144,6 +144,17 @@ public class UserService {
         }
     }
 
+    public void validateOrganizerPermission(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+        boolean isOrganizer = false; // NOT IMPLEMENTED YET!
+        boolean isAdmin = user.isAdmin();
+
+        if (!isOrganizer && !isAdmin) {
+            throw new NotResourceOwnerException("Access Denied");
+        }
+    }
+
     @Transactional
     public void deleteUserByUsername(String username) {
         User user = userRepository.findByUsername(username)

@@ -19,14 +19,18 @@ public class SeatService {
     private final SeatRepository seatRepository;
     private final LocationRepository locationRepository;
     private final SeatMapper seatMapper;
+    private final UserService userService;
 
-    public SeatService(SeatRepository seatRepository, LocationRepository locationRepository, SeatMapper seatMapper) {
+    public SeatService(SeatRepository seatRepository, LocationRepository locationRepository,
+                       SeatMapper seatMapper, UserService userService) {
         this.seatRepository = seatRepository;
         this.locationRepository = locationRepository;
         this.seatMapper = seatMapper;
+        this.userService = userService;
     }
 
-    public void createSeats(SeatCreationDto seatCreationDto) {
+    public void createSeats(SeatCreationDto seatCreationDto, String username) {
+        userService.validateOrganizerPermission(username);
         Location location = locationRepository.findById(seatCreationDto.getLocation())
                 .orElseThrow(() -> new ResourceNotFoundException("Location Not Found!"));
         var lastSeat = seatRepository.findTopByLocationIdOrderBySeatNumberDesc(seatCreationDto.getLocation());
@@ -56,7 +60,8 @@ public class SeatService {
     }
 
     @Transactional
-    public void deleteSeat(DeletionDto deletionDto) {
+    public void deleteSeat(DeletionDto deletionDto, String username) {
+        userService.validateOrganizerPermission(username);
         Long id = deletionDto.getId();
         Seat seat = seatRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Seat Not Found!"));

@@ -14,13 +14,17 @@ import java.util.List;
 public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
+    private final UserService userService;
 
-    public EventService(EventRepository eventRepository, EventMapper eventMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper,
+                        UserService userService) {
         this.eventRepository = eventRepository;
         this.eventMapper =  eventMapper;
+        this.userService = userService;
     }
 
-    public Event saveEvent(EventDto eventDto) {
+    public Event saveEvent(EventDto eventDto, String username) {
+        userService.validateOrganizerPermission(username);
         Event event = new Event();
         event.setName(eventDto.getName());
         event.setDescription(eventDto.getDescription());
@@ -36,7 +40,8 @@ public class EventService {
     }
 
     @Transactional
-    public void deleteEvent(Long id) {
+    public void deleteEvent(Long id, String username) {
+        userService.validateOrganizerPermission(username);
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event Not Found!"));
         eventRepository.delete(event);
