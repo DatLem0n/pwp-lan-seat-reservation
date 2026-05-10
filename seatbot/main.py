@@ -111,6 +111,7 @@ def make_events_handler():
         return CHOOSING_EVENT
 
     async def event_chosen(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handling for the users chosen event"""
         chosen_name = update.message.text
         events = context.user_data.get("events", {})
 
@@ -133,6 +134,7 @@ def make_events_handler():
         return ConversationHandler.END
 
     async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handling for the user cancelling the operation"""
         context.user_data.clear()
         await update.message.reply_text("Cancelled.", reply_markup=ReplyKeyboardRemove())
         return ConversationHandler.END
