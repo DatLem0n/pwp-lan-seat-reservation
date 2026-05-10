@@ -250,22 +250,15 @@ function formatLastLogin(value) {
   }
 
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const dateFormatter = new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "2-digit",
+  const parts = new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
     timeZone
-  });
-  const timeFormatter = new Intl.DateTimeFormat(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    timeZone,
-    timeZoneName: "short"
-  });
+  }).formatToParts(parsedDate);
+  const dateParts = Object.fromEntries(parts.map((part) => [part.type, part.value]));
 
-  return `${dateFormatter.format(parsedDate)} ${timeFormatter.format(parsedDate)}`;
+  return `${dateParts.day}/${dateParts.month}/${dateParts.year}`;
 }
 
 function userRowHtml(user) {
