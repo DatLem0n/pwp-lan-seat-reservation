@@ -26,25 +26,12 @@ Before running the application create a **.env** file according to the example a
 ### Acquiring certificates
 A TLS certificate is needed for the application to be able to start. To get the certificate for the first time run:
 ```
-docker compose run -d --rm \
-  -p 80:80 \
-  -v ./nginx/nginx.bootstrap.conf:/etc/nginx/conf.d/default.conf:ro \
-  -v certbot_www:/var/www/certbot \
-  nginx
+docker compose -f docker-compose.yml -f docker-compose.bootstrap.yml up nginx certbot --abort-on-container-exit
 ```
-Make sure to change **"yourdomain.com"** and **email** to your actual ones.
-```
-docker compose run --rm certbot certonly \
-  --webroot \
-  --webroot-path /var/www/certbot \
-  -d yourdomain.com \
-  --email you@yourdomain.com \
-  --agree-tos \
-  --no-eff-email
-```
+The application can now be started normally
 
-### Getting a Telegram bot token
-Follow instructions here to create your own Telegram bot and to acquire a bot token https://core.telegram.org/bots/tutorial
+### Telegram bot setup
+Follow instructions here to create your own Telegram bot and to acquire a bot token https://core.telegram.org/bots/tutorial. The bot needs to have a user created in the API backend. Before the user is created, the bot will not start. Create a user using the client WebUI with the bot credentials specified in the **.env** file. Only the username and password need to match, all other info can be whatever.
 
 ### Starting the application stack
 To start the application stack run:
@@ -61,6 +48,7 @@ docker compose up -d
 ### Accessing the application
 - WebUI: "yourdomain.com"  
 - API base URL: "yourdomain.com/api".
+- Api documentation: "yourdomain.com/apidocs/"
 
 ### Running tests
 Tests utilize Spring Mock HTTP requests, so only the database service is required to be active.
