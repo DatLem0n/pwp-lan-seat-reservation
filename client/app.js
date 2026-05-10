@@ -254,11 +254,15 @@ function formatLastLogin(value) {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
     timeZone
   }).formatToParts(parsedDate);
   const dateParts = Object.fromEntries(parts.map((part) => [part.type, part.value]));
 
-  return `${dateParts.day}/${dateParts.month}/${dateParts.year}`;
+  return `${dateParts.day}/${dateParts.month}/${dateParts.year} ${dateParts.hour}:${dateParts.minute}:${dateParts.second}`;
 }
 
 function userRowHtml(user) {
