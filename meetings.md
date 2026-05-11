@@ -1,75 +1,33 @@
 # Meetings minutes
 
-## Meeting 1.
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
+## Mid-term meeting
+* **DATE: ``14.04.2026``**
+* **PARTICIPANTS: Ville, Kalle, Eemeli**
+* **TEACHER: Iván**
 
 ### Action points
-*List here the actions points discussed with assistants*
+- situation checkup
+- questions about client
+- whether our current API matches what is expected in this course.
 
 ### Notes
-*Add here notes that you consider important. This is not mandatory*
-
-
-## Meeting 2.
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
-
-### Action points
-*List here the actions points discussed with assistants*
-
-### Notes
-*Add here notes that you consider important. This is not mandatory*
-
-
-## Meeting 3.
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
-
-### Action points
-*List here the actions points discussed with assistants*
-
-### Notes
-*Add here notes that you consider important. This is not mandatory*
-
-
-## Meeting 4.
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
-
-### Action points
-*List here the actions points discussed with assistants*
-
-### Notes
-*Add here notes that you consider important. This is not mandatory*
-
-
-## Midterm meeting
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
-
-### Action points
-*List here the actions points discussed with assistants*
-
-### Notes
-*Add here notes that you consider important. This is not mandatory*
+- Got useful feedback on our API-design, we later slightly modified the API to better match normal REST principles
 
 
 ## Final meeting
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
+* **DATE: ``11.05.2026``**
+* **PARTICIPANTS: Ville, Kalle, Eemeli**
+* **TEACHER: Iván**
 
 ### Minutes
-*Summary of what was discussed during the meeting*
+- Checkup of entire course project
+- Checking implementation of API, client, and aux-service
+- test coverage, lint, documentation etc.
+- feedback on course
+  
 
 ### Notes
-*Add here notes that you consider important. This is not mandatory*
+- Great meeting, got some useful feedback on how we can potentially improve this, and what could have been done differently.
 
 
 
